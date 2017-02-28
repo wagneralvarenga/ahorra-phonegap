@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+    <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
+	<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline';img-src *; style-src 'self' 'unsafe-inline'; media-src *" />
+	<meta http-equiv="X-Content-Security-Policy" content="default-src *;" />
+	<meta http-equiv="X-WebKit-CSP" content="default-src *;" />
+    <!-- Good default declaration:
+    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+        * Enable inline JS: add 'unsafe-inline' to default-src
+        * Enable eval(): add 'unsafe-eval' to default-src
+    * Create your own at http://cspisawesome.com
+    -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+
+	<meta name="description" content="Ahorra consultando el mejor precio de productos en diferentes lugares">
+	<meta name="author" content="ahorra,mejor,precio,diferentes,lugares,save">
+	<link rel="icon" href="favicon.ico">	
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+	<link rel="stylesheet" href="css/font-awesome/css/font-awesome.min.css" />
+	<link rel="stylesheet" href="js/jquerymobile/jquery.mobile-1.4.5.min.css" />
+	<link rel="stylesheet" href="js/waves/waves.min.css" />
+	<link rel="stylesheet" href="js/wow/animate.css" />
+	<link rel="stylesheet" href="js/nativedroid2/nativedroid2.css" />
+	<script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyC3OugmX0sRx-CiEtDMTbToHr0Jrf0-mys"></script>
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+	<style>
+		html {
+			height: 100%;
+		}
+		#map_canvas {
+			height: 100%;
+		}
+		body {
+			opacity: 0;
+			height: 100%;
+		}
+	</style>
+    <title>Ahorra</title>
+</head>
+<body class="ui-mobile-viewport ui-overlay-a nd2-ready" style="margin: 0px;">
+	<div data-role="page">
+		<div data-role="header" data-position="fixed" class="wow fadeIn" style="overflow:hidden;">
+			<a href="#" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay="1.0s" onclick="Back();"><i class="fa fa-arrow-left"></i></a>
+			<h1 class="wow fadeIn" data-wow-delay="0.4s">Ahorra</h1>
+			<a href="#" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay="1.0s" onclick="Scan();"><i class="fa fa-barcode"></i></a>
+			<div class="ui-corner-all custom-corners">
+				<div class="ui-body ui-body-a">
+					<input type="search" name="txtBuscar" id="txtBuscar" value="" placeholder="Producto a buscar..." style="font-size: 14pt" onkeydown="Search();">
+				</div>
+			</div>
+		</div><!-- /header -->
+		<div data-role="content" id="divContent">
+			<table style="width: 100%; height: 80%; font-family: 'Roboto', sans-serif;">
+				<tr style="height: 100%">
+					<td id="tdTutPrev" align="center" style="width: 10%"><i class="fa fa-chevron-left fa-2x" style="cursor: pointer;" onclick="SetTutorialPage(0, 2);"></i></td>
+					<td id="tdTutText" align="center" style="width: 80%">
+						<h3>Ahorra es una aplicaci&oacute;n que te permite encontrar y comparar los precios de muchos productos en diferentes establecimientos y as&iacute; tomar una decisi&oacute;n de compra inteligente.</h3>
+					</td>
+					<td id="tdTutNext"  align="center" style="width: 10%"><i class="fa fa-chevron-right fa-2x" style="cursor: pointer;" onclick="SetTutorialPage(0, 1);"></i></td>
+				</tr>
+				<tr style="height: 50px">
+					<td colspan="3" align="center" style="width: 100%">
+						<i id="i1" class="fa fa-circle" onclick="SetTutorialPage(1, 0);"></i>&nbsp;
+						<i id="i2" class="fa fa-circle-o" onclick="SetTutorialPage(2, 0);"></i>&nbsp;
+						<i id="i3" class="fa fa-circle-o" onclick="SetTutorialPage(3, 0);"></i>&nbsp;
+						<i id="i4" class="fa fa-circle-o" onclick="SetTutorialPage(4, 0);"></i>&nbsp;
+						<i id="i5" class="fa fa-circle-o" onclick="SetTutorialPage(5, 0);"></i>&nbsp;
+						<i id="i6" class="fa fa-circle-o" onclick="SetTutorialPage(6, 0);"></i>&nbsp;
+						<i id="i7" class="fa fa-circle-o" onclick="SetTutorialPage(7, 0);"></i>&nbsp;
+						<i id="i8" class="fa fa-circle-o" onclick="SetTutorialPage(8, 0);"></i>
+					</td>
+				</tr>
+			</table>
+			<a href="#" class="ui-btn ui-btn-inline ui-btn-fab ui-btn-fab-bottom ui-btn-raised clr-primary" data-role="toast" data-toast-message="Preferencias del sistema">
+				<i class="fa fa-cog" onclick="GetOptions();"></i>
+			</a>
+		</div>
+	</div>
+		
+	<form id="frmSUBMIT" name="frmSUBMIT" enctype="multipart/form-data" action="tran.php" method="POST" target="_blank">
+		<input type="file" id="uploaded_file" name="uploaded_file" class="hidden" value="" accept="image/jpeg" onchange="document.getElementById('frmSUBMIT').action='tran.php?CMD=FILEUPLOAD&PROID=' + pvproID + '&PROEAN=' + pvproEAN + '&uploaded_file=' + pvproEAN + '.png&filename=' + pvproEAN + '.png&ACCOUNT=' + pvstrAccount; document.getElementById('frmSUBMIT').submit();" />
+	</form>
+		
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+	<script type="text/javascript" src="js/jquery.min.js"></script>
+	<script type="text/javascript" src="js/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="js/jquerymobile/jquery.mobile-1.4.5.min.js"></script>
+	<script type="text/javascript" src="js/waves/waves.min.js"></script>
+	<script type="text/javascript" src="js/wow/wow.min.js"></script>
+	<script type="text/javascript" src="js/nativedroid2/nativedroid2.js"></script>
+	<script type="text/javascript" src="js/nd2settings.js"></script>
+    <script type="text/javascript">
+        app.initialize();
+    </script>
+</body>
+
+</html>
