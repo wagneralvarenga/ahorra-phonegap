@@ -1,8 +1,15 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.brainatoms.ahorra" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+    <feature name="AdMob">
+        <param name="android-package" value="com.rjfun.cordova.admob.AdMobPlugin" />
+        <param name="onload" value="true" />
+    </feature>
+    <feature name="Geolocation">
+        <param name="android-package" value="org.apache.cordova.geolocation.Geolocation" />
+    </feature>
     <name>Ahorra</name>
     <description>
-        Ahorra es un aplicaci�n que te permitir� encontrar el precio m�s barato para muchos productos.
+        Ahorra es una aplicación que te permite encontrar y comparar los precios de muchos productos en diferentes establecimientos y así tomar una decisión de compra inteligente.
     </description>
     <author email="wagner.alvarenga@gmail.com" href="http://www.brainatoms.com/ahorra">
         Wagner Alvarenga Franca | BrainAtoms.com

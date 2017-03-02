@@ -33,16 +33,17 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        app.receivedEvent('deviceready');
+		app.receivedEvent('deviceready');
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-        pvstrAccount = GetStorage("AH_EMAIL", "");
+		pvstrAccount = GetStorage("AH_EMAIL", "");
 		pvintDistanciaMax = parseInt(GetStorage("AH_DISTANCIAMAX", "1"));
 		pvstrBack[0] = "" + document.getElementById("divContent").innerHTML;
+		if (AdMob) AdMob.prepareInterstitial( { adId:admobid.interstitial, autoShow:true } );
 		if (navigator.geolocation) {
 			try {
-				navigator.geolocation.watchPosition(GetUserLocation);
+				navigator.geolocation.watchPosition(GetUserLocation, GetUserLocationError);
 			}
 			catch (ee) {
 				MsgBox("Su navegador no permite obtener su ubicaci&oacute;n.");
@@ -50,7 +51,13 @@ var app = {
 		}
 		else
 			MsgBox("Su navegador no acepta la funcionalidad de ubicaci&oacute;n.");
+		setTimeout(ShowAd, 5000);
     }
+};
+
+window.onerror = function (err, fileName, lineNumber) {
+	// alert or console.log a message
+	MsgBox(fileName, 'Line:', lineNumber, 'Error:', e.message);
 };
 
 var pvintPage = 0;
@@ -70,6 +77,9 @@ var pvproID = "";
 var pvproEAN = "";
 var pvproFoto = "";
 var pvobjRequest = null;
+var admobid = {
+	interstitial: 'ca-app-pub-3819406531547363/5304805119'
+}
 
 Number.prototype.formatMoney = function(c, d, t){
 	var n = this, 
@@ -131,8 +141,17 @@ function ContributePrice(vlproID) {
 			lcstrError = "El campo Ubicaci&oacute;n o Nueva Ubicaci&oacute;n es requerido.";
 		if ("" + document.getElementById("txtPrecio").value == "" && lcstrError == "")
 			lcstrError = "El campo Precio es requerido.";
-		if (lcstrError == "")
-			WebRequest("http://www.brainatoms.com/ahorra/tran.php?CMD=CONTRIBUTE2&ID=" + vlproID + "&Ubicacion=" + document.getElementById("txtUbicacion").value + "&NuevaUbicacion=" + window.btoa("" + document.getElementById("txtNuevaUbicacion").value) + "&Precio=" + document.getElementById("txtPrecio").value + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random(), "ContributePriceData", true);
+		if (lcstrError == "") {
+			pvobjRequest = getXmlHttpRequestObject();
+			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=CONTRIBUTE2&ID=" + vlproID + "&Ubicacion=" + document.getElementById("txtUbicacion").value + "&NuevaUbicacion=" + window.btoa("" + document.getElementById("txtNuevaUbicacion").value) + "&Precio=" + document.getElementById("txtPrecio").value + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random();
+				console.log(">> " + lcstrRequest);
+				pvobjRequest.open("GET", lcstrRequest, true);
+				pvobjRequest.onreadystatechange = ContributePriceData;
+				pvobjRequest.send(null);
+			}
+		}
 		else
 			MsgBox(lcstrError);
 	}
@@ -146,28 +165,32 @@ function ContributePriceData(vlstrResponse) {
 	var lcstrHtml = "";
 	
 	try {
-		var lcobjResponse = JSON.parse(vlstrResponse);
-		if (lcobjResponse.errcode == 0) {
-			lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-			lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-			lcstrHtml += "<h3>Contribuir</h3>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "<div class='ui-body ui-body-a'>";
-			lcstrHtml += "<p>Gracias por su ayuda. Se ha agregado el nuevo precio para el producto seleccionado.</p>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "</div>";
-			document.getElementById("divContent").innerHTML = lcstrHtml;
-		}
-		else {
-			lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-			lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-			lcstrHtml += "<h3>Contribuir</h3>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "<div class='ui-body ui-body-a'>";
-			lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "</div>";
-			document.getElementById("divContent").innerHTML = lcstrHtml;
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				if (lcobjResponse.errcode == 0) {
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>Contribuir</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					lcstrHtml += "<p>Gracias por su ayuda. Se ha agregado el nuevo precio para el producto seleccionado.</p>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "</div>";
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+				}
+				else {
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>Contribuir</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "</div>";
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+				}
+			}
 		}
 	}
 	catch (ee) {
@@ -180,91 +203,94 @@ function GetBarCodeData(vlstrResponse) {
 	var lcstrHtml = "";
 	
 	try {
-		var lcobjResponse = JSON.parse(vlstrResponse);
-		if (lcobjResponse.errcode == 0) {
-			for (lcintI = 0; lcintI < lcobjResponse.data.length; lcintI++) {
-				lcstrHtml += "<div class='nd2-card card-media-right card-media-small'>";
-				lcstrHtml += "<div class='card-media'>";
-				if ("" + lcobjResponse.data[lcintI].profoto != "")
-					lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\" />";
-				else
-					lcstrHtml += "<img src='img/noimage.jpg' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\" />";
-				lcstrHtml += "</div>";
-				lcstrHtml += "<div class='card-title has-supporting-text'>";
-				lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.data[lcintI].pronombre + "</b></h5>";
-				lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].proean + "</h5><br />";
-				lcstrHtml += "<a href='#' class='ui-btn ui-btn-raised ui-btn-inline waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\">CONSULTAR PRECIOS</a>";
-				lcstrHtml += "</div>";
-				lcstrHtml += "</div>";
-			}
-			pvintNivel = 1;
-			pvstrBack[pvintNivel] = lcstrHtml;
-			document.getElementById("divContent").innerHTML = lcstrHtml;
-		}
-		else {
-			lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-			lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-			lcstrHtml += "<h3>Busqueda de productos por c&oacute;digo</h3>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "<div class='ui-body ui-body-a'>";
-			lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "</div>";
-			if (lcobjResponse.errcode == 9) {
-				if (lcobjResponse.EAN != "") {							
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				if (lcobjResponse.errcode == 0) {
+					for (lcintI = 0; lcintI < lcobjResponse.data.length; lcintI++) {
+						lcstrHtml += "<div class='nd2-card card-media-right card-media-small'>";
+						lcstrHtml += "<div class='card-media'>";
+						if ("" + lcobjResponse.data[lcintI].profoto != "")
+							lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\" />";
+						else
+							lcstrHtml += "<img src='img/noimage.jpg' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\" />";
+						lcstrHtml += "</div>";
+						lcstrHtml += "<div class='card-title has-supporting-text'>";
+						lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.data[lcintI].pronombre + "</b></h5>";
+						lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].proean + "</h5><br />";
+						lcstrHtml += "<a href='#' class='ui-btn ui-btn-raised ui-btn-inline waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\">CONSULTAR PRECIOS</a>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "</div>";
+					}
+					pvintNivel = 1;
+					pvstrBack[pvintNivel] = lcstrHtml;
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+				}
+				else {
 					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
 					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-					lcstrHtml += "<h3>Ingresa la siguiente informaci&oacute;n</h3>";
+					lcstrHtml += "<h3>Busqueda de productos por c&oacute;digo</h3>";
 					lcstrHtml += "</div>";
 					lcstrHtml += "<div class='ui-body ui-body-a'>";
-					lcstrHtml += "<ul id='ulContribuir' data-role='listview' data-inset='true'>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<label for='txtEAN'>C&oacute;digo de Barras:</label>";
-					lcstrHtml += "<input type='text' name='txtEAN' id='txtEAN' value='" + lcobjResponse.EAN + "' disabled='disabled' />";
-					lcstrHtml += "</li>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<label for='txtProducto'>Producto:</label>";
-					lcstrHtml += "<input type='text' name='txtProducto' id='txtProducto' value='' data-clear-btn='true' placeholder='Nombre del producto' />";
-					lcstrHtml += "</li>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<label for='txtUbicacion'>Donde lo encontraste:</label>";
-					lcstrHtml += "<select name='txtUbicacion' id='txtUbicacion'>";
-					lcstrHtml += "<option value=''>-- SELECCIONE ESTABLECIMIENTO --</option>";
-					for (lcintI = 0; lcintI < lcobjResponse.sucursales.length; lcintI++)
-						lcstrHtml += "<option value='" + lcobjResponse.sucursales[lcintI].sucid + "'>" + lcobjResponse.sucursales[lcintI].sucnombre + "</option>";
-					lcstrHtml += "</select>";
-					lcstrHtml += "</li>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<label for='txtNuevaUbicacion'>No estaba en la lista? Agr&eacute;gala aqui:</label>";
-					lcstrHtml += "<input type='text' name='txtNuevaUbicacion' id='txtNuevaUbicacion' value='' data-clear-btn='true' placeholder='Nombre del nuevo establecimiento' />";
-					lcstrHtml += "</li>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<label for='txtPrecio'>Precio:</label>";
-					lcstrHtml += "<input type='number' name='txtPrecio' id='txtPrecio' value='' data-clear-btn='true' placeholder='Precio del producto' />";
-					lcstrHtml += "</li>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='ContributeProduct();'>Enviar</button>";
-					lcstrHtml += "</li>";
-					lcstrHtml += "</ul>";
+					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
 					lcstrHtml += "</div>";
 					lcstrHtml += "</div>";
-					lcstrHtml += "<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />";
+					if (lcobjResponse.errcode == 9) {
+						if (lcobjResponse.EAN != "") {							
+							lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+							lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+							lcstrHtml += "<h3>Ingresa la siguiente informaci&oacute;n</h3>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "<div class='ui-body ui-body-a'>";
+							lcstrHtml += "<ul id='ulContribuir' data-role='listview' data-inset='true'>";
+							lcstrHtml += "<li class='ui-field-contain'>";
+							lcstrHtml += "<label for='txtEAN'>C&oacute;digo de Barras:</label>";
+							lcstrHtml += "<input type='text' name='txtEAN' id='txtEAN' value='" + lcobjResponse.EAN + "' disabled='disabled' />";
+							lcstrHtml += "</li>";
+							lcstrHtml += "<li class='ui-field-contain'>";
+							lcstrHtml += "<label for='txtProducto'>Producto:</label>";
+							lcstrHtml += "<input type='text' name='txtProducto' id='txtProducto' value='' data-clear-btn='true' placeholder='Nombre del producto' />";
+							lcstrHtml += "</li>";
+							lcstrHtml += "<li class='ui-field-contain'>";
+							lcstrHtml += "<label for='txtUbicacion'>Donde lo encontraste:</label>";
+							lcstrHtml += "<select name='txtUbicacion' id='txtUbicacion'>";
+							lcstrHtml += "<option value=''>-- SELECCIONE ESTABLECIMIENTO --</option>";
+							for (lcintI = 0; lcintI < lcobjResponse.sucursales.length; lcintI++)
+								lcstrHtml += "<option value='" + lcobjResponse.sucursales[lcintI].sucid + "'>" + lcobjResponse.sucursales[lcintI].sucnombre + "</option>";
+							lcstrHtml += "</select>";
+							lcstrHtml += "</li>";
+							lcstrHtml += "<li class='ui-field-contain'>";
+							lcstrHtml += "<label for='txtNuevaUbicacion'>No estaba en la lista? Agr&eacute;gala aqui:</label>";
+							lcstrHtml += "<input type='text' name='txtNuevaUbicacion' id='txtNuevaUbicacion' value='' data-clear-btn='true' placeholder='Nombre del nuevo establecimiento' />";
+							lcstrHtml += "</li>";
+							lcstrHtml += "<li class='ui-field-contain'>";
+							lcstrHtml += "<label for='txtPrecio'>Precio:</label>";
+							lcstrHtml += "<input type='number' name='txtPrecio' id='txtPrecio' value='' data-clear-btn='true' placeholder='Precio del producto' />";
+							lcstrHtml += "</li>";
+							lcstrHtml += "<li class='ui-field-contain'>";
+							lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='ContributeProduct();'>Enviar</button>";
+							lcstrHtml += "</li>";
+							lcstrHtml += "</ul>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />";
+						}
+					}
+					pvintNivel = 1;
+					pvstrBack[pvintNivel] = lcstrHtml;
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+					$('#ulContribuir').listview().listview('refresh');
+					$('#txtUbicacion').selectmenu().selectmenu("refresh"); 
+					$('[type="text"]').textinput().textinput('refresh');
+					$('[type="button"]').button().button('refresh');
+					$('[type="number"]').textinput().textinput('refresh');
 				}
 			}
-			pvintNivel = 1;
-			pvstrBack[pvintNivel] = lcstrHtml;
-			document.getElementById("divContent").innerHTML = lcstrHtml;
-			$('#ulContribuir').listview().listview('refresh');
-			$('#txtUbicacion').selectmenu().selectmenu("refresh"); 
-			$('[type="text"]').textinput().textinput('refresh');
-			$('[type="button"]').button().button('refresh');
-			$('[type="number"]').textinput().textinput('refresh');
 		}
 	}
 	catch (ee) {
-		window.external.MsgBox("Error: " + ee.message + " (GetBarCodeData)");
+		MsgBox("Error: " + ee.message + " (GetBarCodeData)");
 	}
-	window.external.Dismiss();
 }
 
 function GetContributeText(vlobjResponse) {
@@ -311,7 +337,8 @@ function GetContributeText(vlobjResponse) {
 function GetOptions() {
 	var lcstrHtml = "";
 	
-	try {						
+	try {
+		console.log("getoptions");
 		lcstrHtml += "<div class='ui-corner-all custom-corners'>";
 		lcstrHtml += "<div class='ui-bar ui-bar-a'>";
 		lcstrHtml += "<h3>Opciones</h3>";
@@ -347,7 +374,22 @@ function GetOptions() {
 		$('[type="number"]').slider().slider('refresh');
 	}
 	catch (ee) {
+		MsgBox("Error: " + ee.message + " (GetOptions)");
+		alert(ee.message);
 	}
+}
+
+function GetPictureOptions() {
+    var lcobjOptions = {
+        quality: 50,
+        destinationType: Camera.DestinationType.FILE_URI,
+        sourceType: Camera.PictureSourceType.CAMERA,
+        encodingType: Camera.EncodingType.JPEG,
+        mediaType: Camera.MediaType.PICTURE,
+        allowEdit: true,
+        correctOrientation: true  //Corrects Android orientation quirks
+    }
+    return lcobjOptions;
 }
 
 function GetPrices(vlintProductID, vlstrProductName, vlstrProductPhoto, vlstrProductEAN) {
@@ -369,8 +411,17 @@ function GetPrices(vlintProductID, vlstrProductName, vlstrProductPhoto, vlstrPro
 				pvproFoto = "<p align='center'><img src='" + vlstrProductPhoto + "' style='height: 200px' /><br />" + vlstrProductEAN + "</p>";
 		}
 		else
-			pvproFoto = "<p align='center'><img src='img/noimage.jpg' style='cursor: pointer; height: 200px' onclick=\"document.getElementById('uploaded_file').click();\" /><br />" + vlstrProductEAN + "</p>";
-		WebRequest("http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRECIOS&PROID=" + vlintProductID + "&ACCOUNT=" + pvstrAccount + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&PID=" + Math.random(), "GetPricesData", true);
+			pvproFoto = "<p align='center'><img src='img/noimage.jpg' style='cursor: pointer; height: 200px' onclick='TakePicture();' /><br />" + vlstrProductEAN + "</p>";
+		
+		pvobjRequest = getXmlHttpRequestObject();
+		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRECIOS&PROID=" + vlintProductID + "&ACCOUNT=" + pvstrAccount + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&PID=" + Math.random();
+			console.log(">> " + lcstrRequest);
+			pvobjRequest.open("GET", lcstrRequest, true);
+			pvobjRequest.onreadystatechange = GetPricesData;
+			pvobjRequest.send(null);
+		}
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (Search)");
@@ -385,90 +436,94 @@ function GetPricesData(vlstrResponse) {
 	
 	try {
 		pvintNivel = 2;
-		var lcobjResponse = JSON.parse(vlstrResponse);
-		if (lcobjResponse.errcode == 0) {
-			lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-			lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-			lcstrHtml += "<h3>" + lcobjResponse.pronombre + "</h3>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "<div class='ui-body ui-body-a'>";
-			if (pvproFoto != "")
-				lcstrHtml += pvproFoto;
-			lcstrHtml += "</div>";
-			lcstrHtml += "</div>";
-			
-			for (lcintI = 0; lcintI < lcobjResponse.data.length; lcintI++) {
-				if (lcstrPrevSuc != "" + lcobjResponse.data[lcintI].sucid) {
-					lcstrHtml += "<div class='nd2-card'>";
-					lcstrHtml += "<div class='card-title has-supporting-text'>";
-				}
-				if ("" + lcobjResponse.data[lcintI].prevalorpromo != "0")
-					lcstrHtml += "<h3 class='card-primary-title'>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + "&nbsp;<font color='red'>$" + (lcobjResponse.data[lcintI].prevalorpromo).formatMoney(0, ',', '.') + "</font> (" + lcobjResponse.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' title='Es precio es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' style='cursor: pointer;' title='Es precio NO es correcto.' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 0);'></i></h3>";
-				else
-					lcstrHtml += "<h3 class='card-primary-title'>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + " (" + lcobjResponse.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' style='cursor: pointer;' title='Es precio es correcto.' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' title='Es precio NO es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 0);'></i></h3>";
-				lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].prefecha + "<br />" + lcobjResponse.data[lcintI].sucnombre + "</h5>";
-				lcbooAddFooter = true;
-				if ((lcintI + 1) < lcobjResponse.data.length) {
-					if ("" + lcobjResponse.data[lcintI].sucid == "" + lcobjResponse.data[lcintI + 1].sucid)
-						lcbooAddFooter = false;
-				}
-				if (lcbooAddFooter) {
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				if (lcobjResponse.errcode == 0) {
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>" + lcobjResponse.pronombre + "</h3>";
 					lcstrHtml += "</div>";
-					lcstrHtml += "<div class='card-action'>";
-					lcstrHtml += "<div class='row between-xs'>";
-					lcstrHtml += "<div class='col-xs-4'>";
-					lcstrHtml += "<div class='box'>";
-					if (lcobjResponse.data[lcintI].sucdistancia > 0.0)
-						lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button' onclick='GetPricexLocation(" + lcobjResponse.data[lcintI].preid + ");'><i class='fa fa-map-marker' style='cursor: pointer;'></i></a>";
+					lcstrHtml += "<div id='divFoto' class='ui-body ui-body-a'>";
+					if (pvproFoto != "")
+						lcstrHtml += pvproFoto;
 					lcstrHtml += "</div>";
 					lcstrHtml += "</div>";
-					lcstrHtml += "<div class='col-xs-8 align-right'>";
-					lcstrHtml += "<div class='box'>";
-					if (lcobjResponse.data[lcintI].sucdistancia >= 0.0)
-						lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline'>" + (lcobjResponse.data[lcintI].sucdistancia).formatMoney(0, ',', '.') + " metros</a>";
-					else
-						lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline'>WEB</a>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "</div>";
-				}
-			}
-			lcstrHtml += GetContributeText(lcobjResponse);
-			pvstrBack[pvintNivel] = lcstrHtml;
-			document.getElementById("divContent").innerHTML = lcstrHtml;
-		}
-		else {
-			if (pvproFoto != "" && pvproNombre != "") {							
-				lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-				lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-				lcstrHtml += "<h3>" + pvproNombre + "</h3>";
-				lcstrHtml += "</div>";
-				lcstrHtml += "<div class='ui-body ui-body-a'>";
-				lcstrHtml += "<p align='center'>" + pvproFoto + "</p>";
-				lcstrHtml += "</div>";
-				lcstrHtml += "</div>";
-			}
-			lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-			lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-			lcstrHtml += "<h3>Busqueda de precios</h3>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "<div class='ui-body ui-body-a'>";
-			lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "</div>";
-			if (lcobjResponse.errcode == 9) {
-				if (lcobjResponse.proid != "")
+					
+					for (lcintI = 0; lcintI < lcobjResponse.data.length; lcintI++) {
+						if (lcstrPrevSuc != "" + lcobjResponse.data[lcintI].sucid) {
+							lcstrHtml += "<div class='nd2-card'>";
+							lcstrHtml += "<div class='card-title has-supporting-text'>";
+						}
+						if ("" + lcobjResponse.data[lcintI].prevalorpromo != "0")
+							lcstrHtml += "<h3 class='card-primary-title'><strike>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + "</strike>&nbsp;<font color='red'>$" + (lcobjResponse.data[lcintI].prevalorpromo).formatMoney(0, ',', '.') + "</font> (" + lcobjResponse.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' title='Es precio es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' style='cursor: pointer;' title='Es precio NO es correcto.' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 0);'></i></h3>";
+						else
+							lcstrHtml += "<h3 class='card-primary-title'>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + " (" + lcobjResponse.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' style='cursor: pointer;' title='Es precio es correcto.' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' title='Es precio NO es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 0);'></i></h3>";
+						lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].prefecha + "<br />" + lcobjResponse.data[lcintI].sucnombre + "</h5>";
+						lcbooAddFooter = true;
+						if ((lcintI + 1) < lcobjResponse.data.length) {
+							if ("" + lcobjResponse.data[lcintI].sucid == "" + lcobjResponse.data[lcintI + 1].sucid)
+								lcbooAddFooter = false;
+						}
+						if (lcbooAddFooter) {
+							lcstrHtml += "</div>";
+							lcstrHtml += "<div class='card-action'>";
+							lcstrHtml += "<div class='row between-xs'>";
+							lcstrHtml += "<div class='col-xs-4'>";
+							lcstrHtml += "<div class='box'>";
+							if (lcobjResponse.data[lcintI].sucdistancia > 0.0)
+								lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button' onclick='GetPricexLocation(" + lcobjResponse.data[lcintI].preid + ");'><i class='fa fa-map-marker' style='cursor: pointer;'></i></a>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "<div class='col-xs-8 align-right'>";
+							lcstrHtml += "<div class='box'>";
+							if (lcobjResponse.data[lcintI].sucdistancia >= 0.0)
+								lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline'>" + (lcobjResponse.data[lcintI].sucdistancia).formatMoney(0, ',', '.') + " metros</a>";
+							else
+								lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline'>WEB</a>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "</div>";
+						}
+					}
 					lcstrHtml += GetContributeText(lcobjResponse);
+					pvstrBack[pvintNivel] = lcstrHtml;
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+				}
+				else {
+					if (pvproFoto != "" && pvproNombre != "") {							
+						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+						lcstrHtml += "<h3>" + pvproNombre + "</h3>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "<div class='ui-body ui-body-a'>";
+						lcstrHtml += "<p align='center'>" + pvproFoto + "</p>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "</div>";
+					}
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>Busqueda de precios</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "</div>";
+					if (lcobjResponse.errcode == 9) {
+						if (lcobjResponse.proid != "")
+							lcstrHtml += GetContributeText(lcobjResponse);
+					}
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+				}
+				$('#ulContribuir').listview().listview('refresh');
+				$('#txtUbicacion').selectmenu().selectmenu("refresh"); 
+				$('[type="text"]').textinput().textinput('refresh');
+				$('[type="button"]').button().button('refresh');
+				$('[type="number"]').textinput().textinput('refresh');
 			}
-			document.getElementById("divContent").innerHTML = lcstrHtml;
 		}
-		$('#ulContribuir').listview().listview('refresh');
-		$('#txtUbicacion').selectmenu().selectmenu("refresh"); 
-		$('[type="text"]').textinput().textinput('refresh');
-		$('[type="button"]').button().button('refresh');
-		$('[type="number"]').textinput().textinput('refresh');
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (GetPricesData)");
@@ -477,7 +532,15 @@ function GetPricesData(vlstrResponse) {
 
 function GetPricexLocation(vlintPreID) {
 	try {
-		WebRequest("http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRECIOXUBICACION&PREID=" + vlintPreID + "&ACCOUNT=" + pvstrAccount + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&PID=" + Math.random(), "GetPricexLocationData", true);
+		pvobjRequest = getXmlHttpRequestObject();
+		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRECIOXUBICACION&PREID=" + vlintPreID + "&ACCOUNT=" + pvstrAccount + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&PID=" + Math.random();
+			console.log(">> " + lcstrRequest);
+			pvobjRequest.open("GET", lcstrRequest, true);
+			pvobjRequest.onreadystatechange = GetPricexLocationData;
+			pvobjRequest.send(null);
+		}
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (GetPricexLocation)");
@@ -489,25 +552,29 @@ function GetPricexLocationData(vlstrResponse) {
 	var lcstrHtml = "";
 	
 	try {
-		var lcobjResponse = JSON.parse(vlstrResponse);
-		if (lcobjResponse.errcode == 0) {
-			document.getElementById("divContent").innerHTML = "<div id='map_canvas' style='width:100%; height:500px'></div>";
-			var lcobjLatLng = new google.maps.LatLng(pvdblLatitud, pvdblLongitud);
-			var lcoptOptions = {
-				zoom: 15,
-				center: lcobjLatLng,
-				mapTypeId: google.maps.MapTypeId.ROADMAP
-			};
-			pvobjMAP = new google.maps.Map(document.getElementById('map_canvas'), lcoptOptions);
-			var lcobjIcon = new google.maps.MarkerImage('img/user.png', new google.maps.Size(24, 24), new google.maps.Point(0, 0), new google.maps.Point(0, 24));
-			var lcobjUser = new google.maps.Marker({position: lcobjLatLng, icon: lcobjIcon, map: pvobjMAP, title:"Mi ubicaci&oacute;n"});
-			lcobjUser.setMap(pvobjMAP);
-			var lcobjPoint = new google.maps.LatLng(lcobjResponse.suclatitud, lcobjResponse.suclongitud);
-			var lcobjMarker = new google.maps.Marker({position: lcobjPoint, map: pvobjMAP, title:lcobjResponse.sucnombre});
-			lcobjMarker.setMap(pvobjMAP);
-		}
-		else {
-			MsgBox(lcobjResponse.error);
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				if (lcobjResponse.errcode == 0) {
+					document.getElementById("divContent").innerHTML = "<div id='map_canvas' style='width:100%; height:500px'></div>";
+					var lcobjLatLng = new google.maps.LatLng(pvdblLatitud, pvdblLongitud);
+					var lcoptOptions = {
+						zoom: 15,
+						center: lcobjLatLng,
+						mapTypeId: google.maps.MapTypeId.ROADMAP
+					};
+					pvobjMAP = new google.maps.Map(document.getElementById('map_canvas'), lcoptOptions);
+					var lcobjIcon = new google.maps.MarkerImage('img/user.png', new google.maps.Size(24, 24), new google.maps.Point(0, 0), new google.maps.Point(0, 24));
+					var lcobjUser = new google.maps.Marker({position: lcobjLatLng, icon: lcobjIcon, map: pvobjMAP, title:"Mi ubicaci&oacute;n"});
+					lcobjUser.setMap(pvobjMAP);
+					var lcobjPoint = new google.maps.LatLng(lcobjResponse.suclatitud, lcobjResponse.suclongitud);
+					var lcobjMarker = new google.maps.Marker({position: lcobjPoint, map: pvobjMAP, title:lcobjResponse.sucnombre});
+					lcobjMarker.setMap(pvobjMAP);
+				}
+				else {
+					MsgBox(lcobjResponse.error);
+				}
+			}
 		}
 	}
 	catch (ee) {
@@ -544,6 +611,15 @@ function GetUserLocation(position) {
 	}
 }
 
+function GetUserLocationError(error) {
+	try {
+		MsgBox("No fu&eacute; posible obtener la ubicaci&oacute;n del usuario. Error: " + error.code + " - " + error.message);
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (GetUserLocationError)");
+	}
+}
+
 function MsgBox(vlstrMessage) {
 	try {
 		new $.nd2Toast({ // The 'new' keyword is important, otherwise you would overwrite the current toast instance
@@ -561,7 +637,15 @@ function NextPage() {
 		switch (pvstrCommand) {
 			case "GETPRODUCTOS":
 				pvintPage++;
-				WebRequest("http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random(), "SearchData", true);
+				pvobjRequest = getXmlHttpRequestObject();
+				if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+					document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+					lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random();
+					console.log(">> " + lcstrRequest);
+					pvobjRequest.open("GET", lcstrRequest, true);
+					pvobjRequest.onreadystatechange = SearchData;
+					pvobjRequest.send(null);
+				}
 				break;
 		}
 	}
@@ -576,7 +660,15 @@ function PreviousPage() {
 			case "GETPRODUCTOS":
 				if (pvintPage > 0) {
 					pvintPage--;
-					WebRequest("http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random(), "SearchData", true);
+					pvobjRequest = getXmlHttpRequestObject();
+					if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+						document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+						lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random();
+						console.log(">> " + lcstrRequest);
+						pvobjRequest.open("GET", lcstrRequest, true);
+						pvobjRequest.onreadystatechange = SearchData;
+						pvobjRequest.send(null);
+					}
 				}
 				break;
 		}
@@ -609,26 +701,42 @@ function SaveOptions() {
 
 function Scan() {
 	try {
-		cordova.plugins.barcodeScanner.scan(
-			function (result) {
-				WebRequest("http://www.brainatoms.com/ahorra/tran.php?CMD=GETCODIGO&PRO=" + result.text + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random(), "GetBarCodeData", true);
-			},
-			function (error) {
-				MsgBox("Fall&oacute; la lectura del c&oacute;digo de barras. " + error);
-			},
-			{
-				preferFrontCamera : false, // iOS and Android
-				showFlipCameraButton : true, // iOS and Android
-				showTorchButton : true, // iOS and Android
-				torchOn: true, // Android, launch with the torch switched on (if available)
-				prompt : "Posicione el c&oacute;digo de barras dentro del area", // Android
-				resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
-				formats : "EAN_13,EAN_8", // default: all but PDF_417 and RSS_EXPANDED
-				orientation : "landscape", // Android only (portrait|landscape), default unset so it rotates with the device
-				disableAnimations : true, // iOS
-				disableSuccessBeep: false // iOS
-			}
-		);
+		if (pvstrAccount != "") {
+			cordova.plugins.barcodeScanner.scan(
+				function (result) {
+					if (result.text != "") {
+						pvobjRequest = getXmlHttpRequestObject();
+						if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+							document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+							lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETCODIGO&PRO=" + result.text + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random();
+							console.log(">> " + lcstrRequest);
+							pvobjRequest.open("GET", lcstrRequest, true);
+							pvobjRequest.onreadystatechange = GetBarCodeData;
+							pvobjRequest.send(null);
+						}
+					}
+				},
+				function (error) {
+					MsgBox("Fall&oacute; la lectura del c&oacute;digo de barras. " + error);
+				},
+				{
+					preferFrontCamera : false, // iOS and Android
+					showFlipCameraButton : true, // iOS and Android
+					showTorchButton : true, // iOS and Android
+					torchOn: true, // Android, launch with the torch switched on (if available)
+					prompt : "Posicione el c&oacute;digo de barras dentro del area", // Android
+					resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
+					formats : "EAN_13,EAN_8", // default: all but PDF_417 and RSS_EXPANDED
+					orientation : "landscape", // Android only (portrait|landscape), default unset so it rotates with the device
+					disableAnimations : true, // iOS
+					disableSuccessBeep: false // iOS
+				}
+			);
+		}
+		else {
+			MsgBox("Para poder ejecutar esta acci&oacute;n debe registrase primero.");
+			setTimeout(GetOptions, 100);
+		}
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (Scan)");
@@ -636,6 +744,8 @@ function Scan() {
 }
 
 function Search() {
+	var lcstrRequest = "";
+	
 	try {
 		if (event.key == "Enter" || event.keyCode == 13) {
 			if (pvstrAccount != "") {
@@ -643,7 +753,15 @@ function Search() {
 					pvintPage = 0;
 					pvstrCommand = "GETPRODUCTOS";
 					pvstrSearchData = "" + document.getElementById("txtBuscar").value;
-					WebRequest("http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=0&PRO=" + window.btoa("" + document.getElementById("txtBuscar").value) + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random(), "SearchData", true);
+					pvobjRequest = getXmlHttpRequestObject();
+					if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+						document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+						lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=0&PRO=" + window.btoa("" + document.getElementById("txtBuscar").value) + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random();
+						console.log(">> " + lcstrRequest);
+						pvobjRequest.open("GET", lcstrRequest, true);
+						pvobjRequest.onreadystatechange = SearchData;
+						pvobjRequest.send(null);
+					}
 				}
 				else
 					alert("Debe ingresar por lo menos 3 letras del producto.");
@@ -659,7 +777,7 @@ function Search() {
 	}
 }
 
-function SearchData(vlstrResponse) {
+function SearchData() {
 	var lcintI = 0;
 	var lcintPage = 0;
 	var lcintRows = 0;
@@ -667,55 +785,59 @@ function SearchData(vlstrResponse) {
 	var lcstrHtml = "";
 	
 	try {
-		var lcobjResponse = JSON.parse(vlstrResponse);
-		if (lcobjResponse.errcode == 0) {
-			lcintPage = lcobjResponse.page;
-			lcintRows = lcobjResponse.rows;
-			lcintTotRows = lcobjResponse.totrows;
-			lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-			lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-			lcstrHtml += "<h3>" + lcintTotRows + " resultados - P&aacute;gina " + (lcintPage + 1) + " de " + (parseInt(lcintTotRows / 20) + 1) + "</h3>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "<div class='ui-body ui-body-a'>";
-			if (lcintPage > 0)
-				lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='PreviousPage();'>Anteriores resultados</button>";
-			for (lcintI = 0; lcintI < lcobjResponse.data.length; lcintI++) {
-				lcstrHtml += "<div class='nd2-card card-media-right card-media-small'>";
-				lcstrHtml += "<div class='card-media'>";
-				if ("" + lcobjResponse.data[lcintI].profoto != "")
-					lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' style='cursor: pointer' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\" />";
-				else
-					lcstrHtml += "<img src='img/noimage.jpg' style='cursor: pointer' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\" />";
-				lcstrHtml += "</div>";
-				lcstrHtml += "<div class='card-title has-supporting-text'>";
-				lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.data[lcintI].pronombre + "</b></h5>";
-				lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].proean + "</h5><br />";
-				lcstrHtml += "<a href='#' class='ui-btn ui-btn-raised ui-btn-inline waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\">CONSULTAR PRECIOS</a>";
-				lcstrHtml += "</div>";
-				lcstrHtml += "</div>";
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				if (lcobjResponse.errcode == 0) {
+					lcintPage = lcobjResponse.page;
+					lcintRows = lcobjResponse.rows;
+					lcintTotRows = lcobjResponse.totrows;
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>" + lcintTotRows + " resultados - P&aacute;gina " + (lcintPage + 1) + " de " + (parseInt(lcintTotRows / 20) + 1) + "</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					if (lcintPage > 0)
+						lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='PreviousPage();'>Anteriores resultados</button>";
+					for (lcintI = 0; lcintI < lcobjResponse.data.length; lcintI++) {
+						lcstrHtml += "<div class='nd2-card card-media-right card-media-small'>";
+						lcstrHtml += "<div class='card-media'>";
+						if ("" + lcobjResponse.data[lcintI].profoto != "")
+							lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' style='cursor: pointer' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\" />";
+						else
+							lcstrHtml += "<img src='img/noimage.jpg' style='cursor: pointer' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\" />";
+						lcstrHtml += "</div>";
+						lcstrHtml += "<div class='card-title has-supporting-text'>";
+						lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.data[lcintI].pronombre + "</b></h5>";
+						lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].proean + "</h5><br />";
+						lcstrHtml += "<a href='#' class='ui-btn ui-btn-raised ui-btn-inline waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\">CONSULTAR PRECIOS</a>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "</div>";
+					}
+					if (lcintRows == 20)
+						lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='NextPage();'>Siguientes resultados</button>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "</div>";
+					pvintNivel = 1;
+					pvstrBack[pvintNivel] = lcstrHtml;
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+				}
+				else {
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>Busqueda de precios</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "</div>";
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+				}
 			}
-			if (lcintRows == 20)
-				lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='NextPage();'>Siguientes resultados</button>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "</div>";
-			pvintNivel = 1;
-			pvstrBack[pvintNivel] = lcstrHtml;
-			document.getElementById("divContent").innerHTML = lcstrHtml;
-		}
-		else {
-			lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-			lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-			lcstrHtml += "<h3>Busqueda de precios</h3>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "<div class='ui-body ui-body-a'>";
-			lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-			lcstrHtml += "</div>";
-			lcstrHtml += "</div>";
-			document.getElementById("divContent").innerHTML = lcstrHtml;
 		}
 	}
 	catch (ee) {
-		MsgBox("Error: " + ee.message + " (WebRequestData)");
+		MsgBox("Error: " + ee.message + " (SearchData)");
 	}
 }
 
@@ -789,7 +911,7 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i8").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Busque por producto y consulte los precios que ha ingresado nuestra comunidad de usuarios.</h3>";
+				lcstrHtml += "<h3>Escane&eacute; el c&oacute;digo de barras del producto haciendo click en <i class='fa fa-barcode'></i> o busque por nombre del producto y consulte los precios que ha ingresado nuestra comunidad de usuarios.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 			case 4:
@@ -869,10 +991,78 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 	}
 }
 
+function ShowAd() {
+	try {
+		if (AdMob) AdMob.showInterstitial();
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (ShowAd)");
+	}
+}
+
+function TakePicture() {
+    var lcobjOptions = GetPictureOptions();
+
+	try {
+		navigator.camera.getPicture(
+			function cameraSuccess(vlobjImageUri) {
+				UploadPicture(vlobjImageUri);
+			}, 
+			function cameraError(error) {
+				MsgBox("No fu&eacute; posible tomar la foto. Error: " + error);
+			}, 
+			lcobjOptions
+		);
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (TakePicture)");
+	}
+}
+
+function UploadPicture(vlobjImageUri) {
+	try {
+		window.resolveLocalFileSystemURL(
+			vlobjImageUri, 
+			function success(fileEntry) {
+				//console.log("filefullpath: " + fileEntry.fullPath);
+				//console.log("filenativeurl: " + fileEntry.nativeURL);
+				var lcobjOptions = new FileUploadOptions();
+				lcobjOptions.fileKey = "uploaded_file";
+				lcobjOptions.fileName = pvproEAN + ".jpg";
+				lcobjOptions.mimeType = "image/jpeg";
+				var lcobjFileTransfer = new FileTransfer();
+				lcobjFileTransfer.upload(
+					fileEntry.nativeURL, 
+					encodeURI("http://www.brainatoms.com/ahorra/tran.php?CMD=FILEUPLOAD&PROID=" + pvproID + "&PROEAN=" + pvproEAN + "&uploaded_file=" + pvproEAN + ".png&filename=" + pvproEAN + ".png&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random()), 
+					function(r) {
+						var lcobjResponse = JSON.parse(r.response);
+						MsgBox(lcobjResponse.error);
+					}, 
+					function(error) {
+						MsgBox(error);
+					},
+					lcobjOptions
+				);
+			}, 
+			function () {}
+		);
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (Search)");
+	}
+}
+
 function ValidatePrice(vlintPreID, vlintValoracion) {
 	try {
-		document.getElementById("lblValoracion").innerHTML = "<img src='css/themes/default/images/ajax-loader.gif' style='height: 20px' />";
-		WebRequest("http://www.brainatoms.com/ahorra/tran.php?CMD=VALIDATEPRECIO&PREID=" + vlintPreID + "&VALORACION=" + vlintValoracion + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random(), "ValidatePriceData", false);
+		pvobjRequest = getXmlHttpRequestObject();
+		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+			document.getElementById("lblValoracion").innerHTML = "<img src='css/themes/default/images/ajax-loader.gif' style='height: 20px' />";
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=VALIDATEPRECIO&PREID=" + vlintPreID + "&VALORACION=" + vlintValoracion + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random();
+			console.log(">> " + lcstrRequest);
+			pvobjRequest.open("GET", lcstrRequest, true);
+			pvobjRequest.onreadystatechange = ValidatePriceData;
+			pvobjRequest.send(null);
+		}
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (ValidatePrice)");
@@ -881,42 +1071,15 @@ function ValidatePrice(vlintPreID, vlintValoracion) {
 
 function ValidatePriceData(vlstrResponse) {
 	try {
-		var lcobjResponse = JSON.parse(vlstrResponse);
-		document.getElementById("lblValoracion").innerHTML = "" + lcobjResponse.prevaloracion;
-		MsgBox(lcobjResponse.error);
-	}
-	catch (ee) {
-		MsgBox("Error: " + ee.message + " (ValidatePriceData)");
-	}
-}
-
-function WebRequest(vlstrRequest, vlstrFunction, vlbooShowLoader) {
-	try {
-		pvstrFunction = vlstrFunction;
-		pvobjRequest = getXmlHttpRequestObject();
-		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-			if (vlbooShowLoader)
-				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
-			pvobjRequest.open("GET", vlstrRequest, true);
-			pvobjRequest.onreadystatechange = WebRequestData;
-			pvobjRequest.send(null);
-		}
-	}
-	catch (ee) {
-		MsgBox("Error: " + ee.message + " (WebRequest)");
-	}
-}
-
-function WebRequestData() {
-	try {
 		if (pvobjRequest.readyState == 4) {
 			if (pvobjRequest.status == 200) {
-				if (pvstrFunction != "")
-					setTimeout(pvstrFunction + "('" + pvobjRequest.responseText + "')", 100);
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				document.getElementById("lblValoracion").innerHTML = "" + lcobjResponse.prevaloracion;
+				MsgBox(lcobjResponse.error);
 			}
 		}
 	}
 	catch (ee) {
-		MsgBox("Error: " + ee.message + " (WebRequestData)");
+		MsgBox("Error: " + ee.message + " (ValidatePriceData)");
 	}
 }

@@ -66,6 +66,9 @@
         },
         "phonegap-plugin-barcodescanner": {
             "PACKAGE_NAME": "com.brainatoms.ahorra"
+        },
+        "cordova-plugin-admobpro": {
+            "PACKAGE_NAME": "com.brainatoms.ahorra"
         }
     },
     "dependent_plugins": {
@@ -73,6 +76,9 @@
             "PACKAGE_NAME": "com.brainatoms.ahorra"
         },
         "cordova-plugin-file": {
+            "PACKAGE_NAME": "com.brainatoms.ahorra"
+        },
+        "cordova-plugin-extension": {
             "PACKAGE_NAME": "com.brainatoms.ahorra"
         }
     }
