@@ -1007,7 +1007,7 @@ function ShowTerms() {
 		navigator.notification.confirm(
 			lcstrTerms,
 			function (button) {
-				if (button == 'Ok')
+				if (button == 1)
 					SetStorage("AH_VERSION", pvstrVersion);
 				else
 					navigator.app.exitApp();
