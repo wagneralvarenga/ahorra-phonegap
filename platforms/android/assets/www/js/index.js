@@ -16,6 +16,29 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+var pvintPage = 0;
+var pvintTutorialPage = 1;
+var pvintPage = 0;
+var pvintNivel = 0;
+var pvintDistanciaMax = 5;
+var pvdblLatitud = 6.2126324;
+var pvdblLongitud = -75.5800677;
+var pvstrVersion = "1.0";
+var pvstrAccount = "";
+var pvstrFunction = "";
+var pvstrCommand = "";
+var pvstrSearchData = "";
+var pvstrBack = ["", "", ""];
+var pvproNombre = "";
+var pvproID = "";
+var pvproEAN = "";
+var pvproFoto = "";
+var pvobjRequest = null;
+var admobid = {
+	interstitial: 'ca-app-pub-3819406531547363/5304805119'
+}
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -37,7 +60,8 @@ var app = {
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-		pvstrAccount = GetStorage("AH_EMAIL", "");
+		var lcstrVersion = GetStorage("AH_VERSION", "");
+		pvstrAccount = "" + device.uuid;
 		pvintDistanciaMax = parseInt(GetStorage("AH_DISTANCIAMAX", "1"));
 		pvstrBack[0] = "" + document.getElementById("divContent").innerHTML;
 		if (AdMob) AdMob.prepareInterstitial( { adId:admobid.interstitial, autoShow:true } );
@@ -51,7 +75,10 @@ var app = {
 		}
 		else
 			MsgBox("Su navegador no acepta la funcionalidad de ubicaci&oacute;n.");
-		setTimeout(ShowAd, 5000);
+		if (pvstrVersion != lcstrVersion)
+			setTimeout(ShowTerms, 100);
+		else
+			setTimeout(ShowAd, 5000);
     }
 };
 
@@ -59,27 +86,6 @@ window.onerror = function (err, fileName, lineNumber) {
 	// alert or console.log a message
 	MsgBox(fileName, 'Line:', lineNumber, 'Error:', e.message);
 };
-
-var pvintPage = 0;
-var pvintTutorialPage = 1;
-var pvintPage = 0;
-var pvintNivel = 0;
-var pvintDistanciaMax = 5;
-var pvdblLatitud = 6.2126324;
-var pvdblLongitud = -75.5800677;
-var pvstrAccount = "";
-var pvstrFunction = "";
-var pvstrCommand = "";
-var pvstrSearchData = "";
-var pvstrBack = ["", "", ""];
-var pvproNombre = "";
-var pvproID = "";
-var pvproEAN = "";
-var pvproFoto = "";
-var pvobjRequest = null;
-var admobid = {
-	interstitial: 'ca-app-pub-3819406531547363/5304805119'
-}
 
 Number.prototype.formatMoney = function(c, d, t){
 	var n = this, 
@@ -346,16 +352,8 @@ function GetOptions() {
 		lcstrHtml += "<div class='ui-body ui-body-a'>";
 		lcstrHtml += "<ul id='ulOpciones' data-role='listview' data-inset='true'>";
 		lcstrHtml += "<li class='ui-field-contain'>";
-		lcstrHtml += "<label for='txtEmail'>Email:</label>";
-		lcstrHtml += "<input type='text' name='txtEmail' id='txtEmail' value='" + pvstrAccount + "' data-clear-btn='true' placeholder='Email del usuario' />";
-		lcstrHtml += "</li>";
-		lcstrHtml += "<li class='ui-field-contain'>";
-		lcstrHtml += "<label for='txtLatitud'>Latitud:</label>";
-		lcstrHtml += "<input type='text' name='txtLatitud' id='txtLatitud' value='" + pvdblLatitud + "' data-clear-btn='true' placeholder='Latitud del usuario' />";
-		lcstrHtml += "</li>";
-		lcstrHtml += "<li class='ui-field-contain'>";
-		lcstrHtml += "<label for='txtLongitud'>Longitud:</label>";
-		lcstrHtml += "<input type='text' name='txtLongitud' id='txtLongitud' value='" + pvdblLongitud + "' data-clear-btn='true' placeholder='Longitud del usuario' />";
+		lcstrHtml += "<label for='txtEmail'>ID:</label>";
+		lcstrHtml += "<input type='text' name='txtEmail' id='txtEmail' value='" + pvstrAccount + "' data-clear-btn='true' placeholder='Email del usuario' disabled='disabled' />";
 		lcstrHtml += "</li>";
 		lcstrHtml += "<li class='ui-field-contain'>";
 		lcstrHtml += "<label for='txtDistancia'>Distancia m&aacute;xima a buscar (Km):</label>";
@@ -997,6 +995,37 @@ function ShowAd() {
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (ShowAd)");
+	}
+}
+
+function ShowTerms() {
+	var lcstrTerms = "";
+	
+	try {		
+		lcstrTerms = "LIMITACI&Oacute;N DE RESPONSABILIDAD Y GARANT&Iacute;A";
+		lcstrTerms += "\r\n\r\nEL DESARROLLADOR PROPORCIONA EL SERVICIO Y EL CONTENIDO INCLUIDO EN EL MISMO PARA SU USO 'COMO ES' Y 'SEG&Uacute;N DISPONIBILIDAD'. NO PUEDEN SER PERSONALIZADOS PARA SATISFACER LAS NECESIDADES DE CADA USUARIO. RECHAZA TODAS LAS GARANT&Iacute;AS Y REPRESENTACIONES, EXPRESAS O IMPL&Iacute;CITAS, CON RESPECTO AL SERVICIO, INCLUYENDO, SIN LIMITACI&Oacute;N, LAS GARANT&Iacute;AS DE COMERCIALIZACI&Oacute;N E IDONEIDAD PARA UN PROP&Oacute;SITO PARTICULAR, CARACTER&Iacute;STICAS, CALIDAD, NO INFRACCI&Oacute;N, T&Iacute;TULO, COMPATIBILIDAD, RENDIMIENTO, SEGURIDAD O EXACTITUD.";
+		lcstrTerms += "\r\n\r\nAdem&aacute;s y sin excepci&oacute;n a la cl&aacute;usula anterior, el desarrollador renuncia a cualquier garant&iacute;a.";
+		lcstrTerms += "\r\n\r\nUsted reconoce y acepta que usted asume toda la responsabilidad &uacute;nica y exclusiva para el uso del servicio y que el uso del servicio es bajo su propio riesgo. Usted reconoce que deben observar todas las leyes de tr&aacute;nsito, mientras use del Servicio.";
+		lcstrTerms += "\r\n\r\nEl desarrollador hace esfuerzos para ofrecerle una alta calidad y un servicio satisfactorio. Sin embargo, no se garantiza que el servicio funcionar&aacute; de manera ininterrumpida o sin errores, o que siempre estar&aacute; disponible o libre de todos los componentes da&ntilde;inos, o que es seguro, protegido del acceso no autorizado a las computadoras de el desarrollador, inmune a da&ntilde;os y perjuicios, libre de fallas, errores o fallas, incluyendo, pero no limitado a fallas de hardware, fallos de software y fallos de software de comunicaci&oacute;n, propiedad de el desarrollador o cualquiera de sus colaboradores.";
+		lcstrTerms += "\r\n\r\nEL DESARROLLADOR, NO SE HAR&Aacute; RESPONSABLE DE NING&Uacute;N DA&Ntilde;O DIRECTO, INDIRECTO, INCIDENTAL O CONSECUENTE, O CUALQUIER OTRO DA&Ntilde;O Y P&Eacute;RDIDA (INCLUYENDO LA P&Eacute;RDIDA DE DATOS) COSTOS, GASTOS Y PAGOS, YA SEA EN AGRAVIO, CONTRACTUAL O DE CUALQUIER OTRA FORMA DE RESPONSABILIDAD, DERIVADOS DE O EN CONEXION CON EL USO, O DE LA IMPOSIBILIDAD DE USO DEL SERVICIO O DE CUALQUIER FALLO, ERROR, O DETERIORO EN LAS FUNCION DEL SERVICIO, O POR CUALQUIER TIPO DE ERROR, O ERROR COMETIDO POR EL DESARROLLADOR O PERSONA QUE ACT&Uacute;E EN SU NOMBRE, O DE SU CONFIANZA EN EL CONTENIDO DEL SERVICIO, INCLUYENDO, SIN LIMITACI&Oacute;N, EL CONTENIDO SON ORIGINARIOS DE TERCEROS, O POR CUALQUIER TIPO DE COMUNICACI&Oacute;N CON EL SERVICIO, O CON OTROS USUARIOS EN O A TRAV&Eacute;S DEL SERVICIO O DE CUALQUIER NEGACI&Oacute;N O CANCELACI&Oacute;N DE SU CUENTA DE USUARIO O DE LA RETENCI&Oacute;N, SUPRESI&Oacute;N, COMUNICACI&Oacute;N Y CUALQUIER OTRO USO O LA P&Eacute;RDIDA DE SU CONTENIDO EN EL SERVICIO. EN CUALQUIER CASO, SU &Uacute;NICA SE LIMITA A CORREGIR TALES ERRORES, O MAL FUNCIONAMIENTO, Y A LA LUZ DE LAS CIRCUNSTANCIAS PERTINENTES.";
+		lcstrTerms += "\r\n\r\nAdem&aacute;s y sin excepci&oacute;n a la cl&aacute;usula anterior, el desarrollador no ser&aacute; responsable por ning&uacute;n tipo de responsabilidad que se derive de su confianza en, o en conexi&oacute;n con el uso del contenido de la informaci&oacute;n comercial publicado en el Servicio. Dicha informaci&oacute;n puede ser presentada en los audios del servicio (tales como las indicaciones para la ubicaci&oacute;n de los establecimientos, sus ofertas comerciales, etc) o de otra manera.";
+		lcstrTerms += "\r\n\r\nACEPTA CEDER TODOS LOS DERECHOS SOBRE LAS IM&Aacute;GENES DE PRODUCTOS TOMADAS POR USTED DESDE LA APLICACI&Oacute;N.";
+		lcstrTerms += "\r\n\r\nLa aplicaci&oacute;n consume datos de internet al consultar la informaci&oacute;n de productos y precios.";
+		lcstrTerms += "\r\n\r\nAcepta la recepci&oacute;n de correos con novedades del producto.";
+		navigator.notification.confirm(
+			'Acepta los T&eacute;rminos y Condiciones',
+			function (button) {
+				if (button == 'Ok')
+					SetStorage("AH_VERSION", pvstrVersion);
+				else
+					navigator.app.exitApp();
+			},
+			lcstrTerms,
+			'Ok, Cancelar'
+        );
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (ShowTerms)");
 	}
 }
 
