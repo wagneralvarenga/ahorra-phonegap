@@ -77,8 +77,9 @@ var app = {
 			MsgBox("Su navegador no acepta la funcionalidad de ubicaci&oacute;n.");
 		if (pvstrVersion != lcstrVersion)
 			setTimeout(ShowTerms, 100);
-		else
-			setTimeout(ShowAd, 5000);
+		else {
+			if (AdMob) AdMob.prepareInterstitial( { adId:admobid.interstitial, autoShow:true } );
+		}
     }
 };
 
@@ -881,7 +882,7 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i8").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Ahorra es una aplicaci&oacute;n que te permite encontrar y comparar los precios de muchos productos en diferentes establecimientos y as&iacute; tomar una decisi&oacute;n de compra inteligente.</h3>";
+				lcstrHtml += "<h3>Ahorra es una aplicaci&oacute;n que te permite encontrar y comparar los precios de muchos productos en diferentes establecimientos y así tomar una decisi&oacute;n de compra inteligente.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 			case 2:
@@ -989,38 +990,29 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 	}
 }
 
-function ShowAd() {
-	try {
-		if (AdMob) AdMob.showInterstitial();
-	}
-	catch (ee) {
-		MsgBox("Error: " + ee.message + " (ShowAd)");
-	}
-}
-
 function ShowTerms() {
 	var lcstrTerms = "";
 	
 	try {		
-		lcstrTerms = "LIMITACI&Oacute;N DE RESPONSABILIDAD Y GARANT&Iacute;A";
-		lcstrTerms += "\r\n\r\nEL DESARROLLADOR PROPORCIONA EL SERVICIO Y EL CONTENIDO INCLUIDO EN EL MISMO PARA SU USO 'COMO ES' Y 'SEG&Uacute;N DISPONIBILIDAD'. NO PUEDEN SER PERSONALIZADOS PARA SATISFACER LAS NECESIDADES DE CADA USUARIO. RECHAZA TODAS LAS GARANT&Iacute;AS Y REPRESENTACIONES, EXPRESAS O IMPL&Iacute;CITAS, CON RESPECTO AL SERVICIO, INCLUYENDO, SIN LIMITACI&Oacute;N, LAS GARANT&Iacute;AS DE COMERCIALIZACI&Oacute;N E IDONEIDAD PARA UN PROP&Oacute;SITO PARTICULAR, CARACTER&Iacute;STICAS, CALIDAD, NO INFRACCI&Oacute;N, T&Iacute;TULO, COMPATIBILIDAD, RENDIMIENTO, SEGURIDAD O EXACTITUD.";
-		lcstrTerms += "\r\n\r\nAdem&aacute;s y sin excepci&oacute;n a la cl&aacute;usula anterior, el desarrollador renuncia a cualquier garant&iacute;a.";
-		lcstrTerms += "\r\n\r\nUsted reconoce y acepta que usted asume toda la responsabilidad &uacute;nica y exclusiva para el uso del servicio y que el uso del servicio es bajo su propio riesgo. Usted reconoce que deben observar todas las leyes de tr&aacute;nsito, mientras use del Servicio.";
-		lcstrTerms += "\r\n\r\nEl desarrollador hace esfuerzos para ofrecerle una alta calidad y un servicio satisfactorio. Sin embargo, no se garantiza que el servicio funcionar&aacute; de manera ininterrumpida o sin errores, o que siempre estar&aacute; disponible o libre de todos los componentes da&ntilde;inos, o que es seguro, protegido del acceso no autorizado a las computadoras de el desarrollador, inmune a da&ntilde;os y perjuicios, libre de fallas, errores o fallas, incluyendo, pero no limitado a fallas de hardware, fallos de software y fallos de software de comunicaci&oacute;n, propiedad de el desarrollador o cualquiera de sus colaboradores.";
-		lcstrTerms += "\r\n\r\nEL DESARROLLADOR, NO SE HAR&Aacute; RESPONSABLE DE NING&Uacute;N DA&Ntilde;O DIRECTO, INDIRECTO, INCIDENTAL O CONSECUENTE, O CUALQUIER OTRO DA&Ntilde;O Y P&Eacute;RDIDA (INCLUYENDO LA P&Eacute;RDIDA DE DATOS) COSTOS, GASTOS Y PAGOS, YA SEA EN AGRAVIO, CONTRACTUAL O DE CUALQUIER OTRA FORMA DE RESPONSABILIDAD, DERIVADOS DE O EN CONEXION CON EL USO, O DE LA IMPOSIBILIDAD DE USO DEL SERVICIO O DE CUALQUIER FALLO, ERROR, O DETERIORO EN LAS FUNCION DEL SERVICIO, O POR CUALQUIER TIPO DE ERROR, O ERROR COMETIDO POR EL DESARROLLADOR O PERSONA QUE ACT&Uacute;E EN SU NOMBRE, O DE SU CONFIANZA EN EL CONTENIDO DEL SERVICIO, INCLUYENDO, SIN LIMITACI&Oacute;N, EL CONTENIDO SON ORIGINARIOS DE TERCEROS, O POR CUALQUIER TIPO DE COMUNICACI&Oacute;N CON EL SERVICIO, O CON OTROS USUARIOS EN O A TRAV&Eacute;S DEL SERVICIO O DE CUALQUIER NEGACI&Oacute;N O CANCELACI&Oacute;N DE SU CUENTA DE USUARIO O DE LA RETENCI&Oacute;N, SUPRESI&Oacute;N, COMUNICACI&Oacute;N Y CUALQUIER OTRO USO O LA P&Eacute;RDIDA DE SU CONTENIDO EN EL SERVICIO. EN CUALQUIER CASO, SU &Uacute;NICA SE LIMITA A CORREGIR TALES ERRORES, O MAL FUNCIONAMIENTO, Y A LA LUZ DE LAS CIRCUNSTANCIAS PERTINENTES.";
-		lcstrTerms += "\r\n\r\nAdem&aacute;s y sin excepci&oacute;n a la cl&aacute;usula anterior, el desarrollador no ser&aacute; responsable por ning&uacute;n tipo de responsabilidad que se derive de su confianza en, o en conexi&oacute;n con el uso del contenido de la informaci&oacute;n comercial publicado en el Servicio. Dicha informaci&oacute;n puede ser presentada en los audios del servicio (tales como las indicaciones para la ubicaci&oacute;n de los establecimientos, sus ofertas comerciales, etc) o de otra manera.";
-		lcstrTerms += "\r\n\r\nACEPTA CEDER TODOS LOS DERECHOS SOBRE LAS IM&Aacute;GENES DE PRODUCTOS TOMADAS POR USTED DESDE LA APLICACI&Oacute;N.";
-		lcstrTerms += "\r\n\r\nLa aplicaci&oacute;n consume datos de internet al consultar la informaci&oacute;n de productos y precios.";
-		lcstrTerms += "\r\n\r\nAcepta la recepci&oacute;n de correos con novedades del producto.";
+		lcstrTerms = "LIMITACIÓN DE RESPONSABILIDAD Y GARANTÍA";
+		lcstrTerms += "\r\n\r\nEL DESARROLLADOR PROPORCIONA EL SERVICIO Y EL CONTENIDO INCLUIDO EN EL MISMO PARA SU USO 'COMO ES' Y 'SEGÚN DISPONIBILIDAD'. NO PUEDEN SER PERSONALIZADOS PARA SATISFACER LAS NECESIDADES DE CADA USUARIO. RECHAZA TODAS LAS GARANTÍAS Y REPRESENTACIONES, EXPRESAS O IMPLÍCITAS, CON RESPECTO AL SERVICIO, INCLUYENDO, SIN LIMITACIÓN, LAS GARANTÍAS DE COMERCIALIZACIÓN E IDONEIDAD PARA UN PROPÓSITO PARTICULAR, CARACTERÍSTICAS, CALIDAD, NO INFRACCIÓN, TÍTULO, COMPATIBILIDAD, RENDIMIENTO, SEGURIDAD O EXACTITUD.";
+		lcstrTerms += "\r\n\r\nAdemás y sin excepción a la cláusula anterior, el desarrollador renuncia a cualquier garantía.";
+		lcstrTerms += "\r\n\r\nUsted reconoce y acepta que usted asume toda la responsabilidad única y exclusiva para el uso del servicio y que el uso del servicio es bajo su propio riesgo. Usted reconoce que deben observar todas las leyes de tránsito, mientras use del Servicio.";
+		lcstrTerms += "\r\n\r\nEl desarrollador hace esfuerzos para ofrecerle una alta calidad y un servicio satisfactorio. Sin embargo, no se garantiza que el servicio funcionará de manera ininterrumpida o sin errores, o que siempre estará disponible o libre de todos los componentes dañinos, o que es seguro, protegido del acceso no autorizado a las computadoras de el desarrollador, inmune a daños y perjuicios, libre de fallas, errores o fallas, incluyendo, pero no limitado a fallas de hardware, fallos de software y fallos de software de comunicación, propiedad de el desarrollador o cualquiera de sus colaboradores.";
+		lcstrTerms += "\r\n\r\nEL DESARROLLADOR, NO SE HARÁ RESPONSABLE DE NINGÚN DAÑO DIRECTO, INDIRECTO, INCIDENTAL O CONSECUENTE, O CUALQUIER OTRO DAÑO Y PÉRDIDA (INCLUYENDO LA PÉRDIDA DE DATOS) COSTOS, GASTOS Y PAGOS, YA SEA EN AGRAVIO, CONTRACTUAL O DE CUALQUIER OTRA FORMA DE RESPONSABILIDAD, DERIVADOS DE O EN CONEXION CON EL USO, O DE LA IMPOSIBILIDAD DE USO DEL SERVICIO O DE CUALQUIER FALLO, ERROR, O DETERIORO EN LAS FUNCION DEL SERVICIO, O POR CUALQUIER TIPO DE ERROR, O ERROR COMETIDO POR EL DESARROLLADOR O PERSONA QUE ACTÚE EN SU NOMBRE, O DE SU CONFIANZA EN EL CONTENIDO DEL SERVICIO, INCLUYENDO, SIN LIMITACIÓN, EL CONTENIDO SON ORIGINARIOS DE TERCEROS, O POR CUALQUIER TIPO DE COMUNICACIÓN CON EL SERVICIO, O CON OTROS USUARIOS EN O A TRAVÉS DEL SERVICIO O DE CUALQUIER NEGACIÓN O CANCELACIÓN DE SU CUENTA DE USUARIO O DE LA RETENCIÓN, SUPRESIÓN, COMUNICACIÓN Y CUALQUIER OTRO USO O LA PÉRDIDA DE SU CONTENIDO EN EL SERVICIO. EN CUALQUIER CASO, SU ÚNICA SE LIMITA A CORREGIR TALES ERRORES, O MAL FUNCIONAMIENTO, Y A LA LUZ DE LAS CIRCUNSTANCIAS PERTINENTES.";
+		lcstrTerms += "\r\n\r\nAdemás y sin excepción a la cláusula anterior, el desarrollador no será responsable por ningún tipo de responsabilidad que se derive de su confianza en, o en conexión con el uso del contenido de la información comercial publicado en el Servicio. Dicha información puede ser presentada en los audios del servicio (tales como las indicaciones para la ubicación de los establecimientos, sus ofertas comerciales, etc) o de otra manera.";
+		lcstrTerms += "\r\n\r\nACEPTA CEDER TODOS LOS DERECHOS SOBRE LAS IMÁGENES DE PRODUCTOS TOMADAS POR USTED DESDE LA APLICACIÓN.";
+		lcstrTerms += "\r\n\r\nLa aplicación consume datos de internet al consultar la información de productos y precios.";
+		lcstrTerms += "\r\n\r\nAcepta la recepción de correos con novedades del producto.";
 		navigator.notification.confirm(
-			'Acepta los T&eacute;rminos y Condiciones',
+			lcstrTerms,
 			function (button) {
 				if (button == 'Ok')
 					SetStorage("AH_VERSION", pvstrVersion);
 				else
 					navigator.app.exitApp();
 			},
-			lcstrTerms,
+			'Acepta los T&eacute;rminos y Condiciones',
 			'Ok, Cancelar'
         );
 	}
