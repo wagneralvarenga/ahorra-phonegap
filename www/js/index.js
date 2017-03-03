@@ -36,7 +36,7 @@ var pvproEAN = "";
 var pvproFoto = "";
 var pvobjRequest = null;
 var admobid = {
-	interstitial: 'ca-app-pub-3819406531547363/5304805119'
+	interstitial: 'ca-app-pub-3819406531547363/4201960719'
 }
 
 var app = {
@@ -995,13 +995,13 @@ function ShowTerms() {
 	
 	try {
 		lcstrTerms = "LIMITACIÓN DE RESPONSABILIDAD Y GARANTÍA";
-		lcstrTerms += "\r\n\r\nEL DESARROLLADOR PROPORCIONA EL SERVICIO Y EL CONTENIDO INCLUIDO EN EL MISMO PARA SU USO 'COMO ES' Y 'SEGÚN DISPONIBILIDAD'. NO PUEDEN SER PERSONALIZADOS PARA SATISFACER LAS NECESIDADES DE CADA USUARIO. RECHAZA TODAS LAS GARANTÍAS Y REPRESENTACIONES, EXPRESAS O IMPLÍCITAS, CON RESPECTO AL SERVICIO, INCLUYENDO, SIN LIMITACIÓN, LAS GARANTÍAS DE COMERCIALIZACIÓN E IDONEIDAD PARA UN PROPÓSITO PARTICULAR, CARACTERÍSTICAS, CALIDAD, NO INFRACCIÓN, TÍTULO, COMPATIBILIDAD, RENDIMIENTO, SEGURIDAD O EXACTITUD.";
+		lcstrTerms += "\r\n\r\nEl desarrollador proporciona el servicio y el contenido incluido en el mismo para su uso 'como es' y 'según disponibilidad'. No pueden ser personalizados para satisfacer las necesidades de cada usuario. Rechaza todas las garantías y representaciones, expresas o implícitas, con respecto al servicio, incluyendo, sin limitación, las garantías de comercialización e idoneidad para un propósito particular, características, calidad, no infracción, título, compatibilidad, rendimiento, seguridad o exactitud.";
 		lcstrTerms += "\r\n\r\nAdemás y sin excepción a la cláusula anterior, el desarrollador renuncia a cualquier garantía.";
 		lcstrTerms += "\r\n\r\nUsted reconoce y acepta que usted asume toda la responsabilidad única y exclusiva para el uso del servicio y que el uso del servicio es bajo su propio riesgo. Usted reconoce que deben observar todas las leyes de tránsito, mientras use del Servicio.";
 		lcstrTerms += "\r\n\r\nEl desarrollador hace esfuerzos para ofrecerle una alta calidad y un servicio satisfactorio. Sin embargo, no se garantiza que el servicio funcionará de manera ininterrumpida o sin errores, o que siempre estará disponible o libre de todos los componentes dañinos, o que es seguro, protegido del acceso no autorizado a las computadoras de el desarrollador, inmune a daños y perjuicios, libre de fallas, errores o fallas, incluyendo, pero no limitado a fallas de hardware, fallos de software y fallos de software de comunicación, propiedad de el desarrollador o cualquiera de sus colaboradores.";
-		lcstrTerms += "\r\n\r\nEL DESARROLLADOR, NO SE HARÁ RESPONSABLE DE NINGÚN DAÑO DIRECTO, INDIRECTO, INCIDENTAL O CONSECUENTE, O CUALQUIER OTRO DAÑO Y PÉRDIDA (INCLUYENDO LA PÉRDIDA DE DATOS) COSTOS, GASTOS Y PAGOS, YA SEA EN AGRAVIO, CONTRACTUAL O DE CUALQUIER OTRA FORMA DE RESPONSABILIDAD, DERIVADOS DE O EN CONEXION CON EL USO, O DE LA IMPOSIBILIDAD DE USO DEL SERVICIO O DE CUALQUIER FALLO, ERROR, O DETERIORO EN LAS FUNCION DEL SERVICIO, O POR CUALQUIER TIPO DE ERROR, O ERROR COMETIDO POR EL DESARROLLADOR O PERSONA QUE ACTÚE EN SU NOMBRE, O DE SU CONFIANZA EN EL CONTENIDO DEL SERVICIO, INCLUYENDO, SIN LIMITACIÓN, EL CONTENIDO SON ORIGINARIOS DE TERCEROS, O POR CUALQUIER TIPO DE COMUNICACIÓN CON EL SERVICIO, O CON OTROS USUARIOS EN O A TRAVÉS DEL SERVICIO O DE CUALQUIER NEGACIÓN O CANCELACIÓN DE SU CUENTA DE USUARIO O DE LA RETENCIÓN, SUPRESIÓN, COMUNICACIÓN Y CUALQUIER OTRO USO O LA PÉRDIDA DE SU CONTENIDO EN EL SERVICIO. EN CUALQUIER CASO, SU ÚNICA SE LIMITA A CORREGIR TALES ERRORES, O MAL FUNCIONAMIENTO, Y A LA LUZ DE LAS CIRCUNSTANCIAS PERTINENTES.";
+		lcstrTerms += "\r\n\r\nEl desarrollador, no se hará responsable de ningún daño directo, indirecto, incidental o consecuente, o cualquier otro daño y pérdida (incluyendo la pérdida de datos) costos, gastos y pagos, ya sea en agravio, contractual o de cualquier otra forma de responsabilidad, derivados de o en conexion con el uso, o de la imposibilidad de uso del servicio o de cualquier fallo, error, o deterioro en las funcion del servicio, o por cualquier tipo de error, o error cometido por el desarrollador o persona que actúe en su nombre, o de su confianza en el contenido del servicio, incluyendo, sin limitación, el contenido son originarios de terceros, o por cualquier tipo de comunicación con el servicio, o con otros usuarios en o a través del servicio o de cualquier negación o cancelación de su cuenta de usuario o de la retención, supresión, comunicación y cualquier otro uso o la pérdida de su contenido en el servicio. En cualquier caso, su única se limita a corregir tales errores, o mal funcionamiento, y a la luz de las circunstancias pertinentes.";
 		lcstrTerms += "\r\n\r\nAdemás y sin excepción a la cláusula anterior, el desarrollador no será responsable por ningún tipo de responsabilidad que se derive de su confianza en, o en conexión con el uso del contenido de la información comercial publicado en el Servicio. Dicha información puede ser presentada en los audios del servicio (tales como las indicaciones para la ubicación de los establecimientos, sus ofertas comerciales, etc) o de otra manera.";
-		lcstrTerms += "\r\n\r\nACEPTA CEDER TODOS LOS DERECHOS SOBRE LAS IMÁGENES DE PRODUCTOS TOMADAS POR USTED DESDE LA APLICACIÓN.";
+		lcstrTerms += "\r\n\r\nEl usuario acepta ceder todos los derechos sobre las imágenes de productos que por él hayan sido fotografiadas desde la aplicación.";
 		lcstrTerms += "\r\n\r\nLa aplicación consume datos de internet al consultar la información de productos y precios.";
 		lcstrTerms += "\r\n\r\nAcepta la recepción de correos con novedades del producto.";
 		navigator.notification.confirm(
@@ -1012,7 +1012,7 @@ function ShowTerms() {
 				else
 					navigator.app.exitApp();
 			},
-			'Acepta los Términos y Condiciones',
+			'Términos y Condiciones',
 			'Ok, Cancelar'
         );
 	}

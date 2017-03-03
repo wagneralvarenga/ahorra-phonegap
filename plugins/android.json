@@ -12,6 +12,9 @@
         },
         "cordova-plugin-geolocation": {
             "PACKAGE_NAME": "com.brainatoms.ahorra"
+        },
+        "cordova-plugin-splashscreen": {
+            "PACKAGE_NAME": "com.brainatoms.ahorra"
         }
     },
     "dependent_plugins": {
