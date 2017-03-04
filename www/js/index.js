@@ -804,7 +804,7 @@ function GetUser() {
 			lcstrHtml += "</li>";
 			lcstrHtml += "<li class='ui-field-contain'>";
 			lcstrHtml += "<label for='txtDeviceID'>ID dispositivo:</label>";
-			lcstrHtml += "<input type='text' name='txtDeviceID' id='txtDeviceID' value='' data-clear-btn='true' placeholder='ID del dispositivo' disabled='disabled' />";
+			lcstrHtml += "<input type='text' name='txtDeviceID' id='txtDeviceID' value='" + pvstrDeviceID + "' data-clear-btn='true' placeholder='ID del dispositivo' disabled='disabled' />";
 			lcstrHtml += "</li>";
 			lcstrHtml += "<li class='ui-field-contain'>";
 			lcstrHtml += "<label for='txtAlias'>Seud&oacute;nimo:</label>";
