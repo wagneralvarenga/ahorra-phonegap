@@ -17,7 +17,10 @@
  * under the License.
  */
 
+var pvbooStartup = true;
 var pvintPage = 0;
+var pvintImageIndex = 1;
+var pvintImageCount = 0;
 var pvintTutorialPage = 1;
 var pvintPage = 0;
 var pvintNivel = 0;
@@ -26,6 +29,7 @@ var pvdblLatitud = 6.2126324;
 var pvdblLongitud = -75.5800677;
 var pvstrVersion = "1.0";
 var pvstrAccount = "";
+var pvstrDeviceID = "";
 var pvstrFunction = "";
 var pvstrCommand = "";
 var pvstrSearchData = "";
@@ -61,7 +65,8 @@ var app = {
     // Update DOM on a Received Event
     receivedEvent: function(id) {
 		var lcstrVersion = GetStorage("AH_VERSION", "");
-		pvstrAccount = "" + device.uuid;
+		pvstrAccount = GetStorage("AH_EMAIL", "");
+		pvstrDeviceID = "" + device.uuid;
 		pvintDistanciaMax = parseInt(GetStorage("AH_DISTANCIAMAX", "1"));
 		pvstrBack[0] = "" + document.getElementById("divContent").innerHTML;
 		if (AdMob) AdMob.prepareInterstitial( { adId:admobid.interstitial, autoShow:true } );
@@ -75,6 +80,7 @@ var app = {
 		}
 		else
 			MsgBox("Su navegador no acepta la funcionalidad de ubicaci&oacute;n.");
+		TutorialPage();
 		if (pvstrVersion != lcstrVersion)
 			setTimeout(ShowTerms, 100);
 		else {
@@ -131,17 +137,21 @@ function Back() {
 		$('[type="text"]').textinput().textinput('refresh');
 		$('[type="button"]').button().button('refresh');
 		if (pvintNivel == 0) {
-			SetTutorialPage(pvintTutorialPage, 0);
+			if (document.getElementById("tdTutText"))
+				SetTutorialPage(pvintTutorialPage, 0);
+			else
+				TutorialPage();
 			document.getElementById("txtBuscar").value = "";
 		}
 	}
 	catch (ee) {
-		MsgBox("Error: " + ee.message + " (BarCodeData)");
+		MsgBox("Error: " + ee.message + " (Back)");
 	}
 }
 
 function ContributePrice(vlproID) {
 	var lcstrError = "";
+	var lcstrRequest = "";
 	
 	try {
 		if ("" + document.getElementById("txtUbicacion").value == "" && "" + document.getElementById("txtNuevaUbicacion").value == "" && lcstrError == "")
@@ -151,12 +161,12 @@ function ContributePrice(vlproID) {
 		if (lcstrError == "") {
 			pvobjRequest = getXmlHttpRequestObject();
 			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
-				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=CONTRIBUTE2&ID=" + vlproID + "&Ubicacion=" + document.getElementById("txtUbicacion").value + "&NuevaUbicacion=" + window.btoa("" + document.getElementById("txtNuevaUbicacion").value) + "&Precio=" + document.getElementById("txtPrecio").value + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random();
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=CONTRIBUTE2&ID=" + vlproID + "&Ubicacion=" + document.getElementById("txtUbicacion").value + "&NuevaUbicacion=" + window.btoa("" + document.getElementById("txtNuevaUbicacion").value) + "&Precio=" + document.getElementById("txtPrecio").value + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 				console.log(">> " + lcstrRequest);
 				pvobjRequest.open("GET", lcstrRequest, true);
 				pvobjRequest.onreadystatechange = ContributePriceData;
 				pvobjRequest.send(null);
+				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
 			}
 		}
 		else
@@ -167,36 +177,32 @@ function ContributePrice(vlproID) {
 	}
 }
 
-function ContributePriceData(vlstrResponse) {
-	var lcintI = 0;
+function ContributePriceData() {
 	var lcstrHtml = "";
 	
 	try {
 		if (pvobjRequest.readyState == 4) {
 			if (pvobjRequest.status == 200) {
 				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
-				if (lcobjResponse.errcode == 0) {
-					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-					lcstrHtml += "<h3>Contribuir</h3>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "<div class='ui-body ui-body-a'>";
+				lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+				lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+				lcstrHtml += "<h3>Contribuir</h3>";
+				lcstrHtml += "</div>";
+				lcstrHtml += "<div class='ui-body ui-body-a'>";
+				if (lcobjResponse.errcode == 0)
 					lcstrHtml += "<p>Gracias por su ayuda. Se ha agregado el nuevo precio para el producto seleccionado.</p>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "</div>";
-					document.getElementById("divContent").innerHTML = lcstrHtml;
-				}
-				else {
-					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-					lcstrHtml += "<h3>Contribuir</h3>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "<div class='ui-body ui-body-a'>";
+				else
 					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "</div>";
-					document.getElementById("divContent").innerHTML = lcstrHtml;
-				}
+				lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
+				lcstrHtml += "<li class='ui-field-contain'>";
+				lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
+				lcstrHtml += "</li>";
+				lcstrHtml += "</ul>";
+				lcstrHtml += "</div>";
+				lcstrHtml += "</div>";
+				document.getElementById("divContent").innerHTML = lcstrHtml;
+				$('#ulHome').listview().listview('refresh');
+				$('[type="button"]').button().button('refresh');
 			}
 		}
 	}
@@ -204,8 +210,76 @@ function ContributePriceData(vlstrResponse) {
 		MsgBox("Error: " + ee.message + " (ContributePriceData)");
 	}
 }
+			
+function ContributeProduct() {
+	var lcstrError = "";
+	
+	try {
+		if ("" + document.getElementById("txtProducto").value == "" && lcstrError == "")
+			lcstrError = "El campo Producto es requerido.";
+		if ("" + document.getElementById("txtUbicacion").value == "" && "" + document.getElementById("txtNuevaUbicacion").value == "" && lcstrError == "")
+			lcstrError = "El campo Ubicación o Nueva Ubicación es requerido.";
+		if ("" + document.getElementById("txtPrecio").value == "" && lcstrError == "")
+			lcstrError = "El campo Precio es requerido.";
+		if (lcstrError == "") {
+			pvobjRequest = getXmlHttpRequestObject();
+			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=CONTRIBUTE&EAN=" + document.getElementById("txtEAN").value + "&Producto=" + window.btoa("" + document.getElementById("txtProducto").value) + "&Ubicacion=" + document.getElementById("txtUbicacion").value + "&NuevaUbicacion=" + window.btoa("" + document.getElementById("txtNuevaUbicacion").value) + "&Precio=" + document.getElementById("txtPrecio").value + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				console.log(">> " + lcstrRequest);
+				pvobjRequest.open("GET", lcstrRequest, true);
+				pvobjRequest.onreadystatechange = ContributeProductData;
+				pvobjRequest.send(null);
+				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+			}
+		}
+		else
+			MsgBox(lcstrError);
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (ContributeProduct)");
+	}
+}
 
-function GetBarCodeData(vlstrResponse) {
+function ContributeProductData() {
+	var lcstrHtml = "";
+	
+	try {
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+				lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+				if (lcobjResponse.errcode == 0) {
+					lcstrHtml += "<h3>¡ Gracias !</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					lcstrHtml += "<p>La información que ingresaste ha sido enviada a nuestro equipo; la revisaremos y pronto la incluiremos para que esté disponible.</p>";
+				}
+				else {
+					lcstrHtml += "<h3>Contribuir</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
+				}
+				lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
+				lcstrHtml += "<li class='ui-field-contain'>";
+				lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
+				lcstrHtml += "</li>";
+				lcstrHtml += "</ul>";
+				lcstrHtml += "</div>";
+				lcstrHtml += "</div>";
+				document.getElementById("divContent").innerHTML = lcstrHtml;
+				$('#ulHome').listview().listview('refresh');
+				$('[type="button"]').button().button('refresh');
+			}
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (ContributeProductData)");
+	}
+}
+
+function GetBarCodeData() {
 	var lcintI = 0;
 	var lcstrHtml = "";
 	
@@ -218,14 +292,14 @@ function GetBarCodeData(vlstrResponse) {
 						lcstrHtml += "<div class='nd2-card card-media-right card-media-small'>";
 						lcstrHtml += "<div class='card-media'>";
 						if ("" + lcobjResponse.data[lcintI].profoto != "")
-							lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\" />";
+							lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', " + lcobjResponse.data[lcintI].profotocount + ");\" />";
 						else
-							lcstrHtml += "<img src='img/noimage.jpg' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\" />";
+							lcstrHtml += "<img src='img/noimage.jpg' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', " + lcobjResponse.data[lcintI].profotocount + ");\" />";
 						lcstrHtml += "</div>";
 						lcstrHtml += "<div class='card-title has-supporting-text'>";
 						lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.data[lcintI].pronombre + "</b></h5>";
 						lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].proean + "</h5><br />";
-						lcstrHtml += "<a href='#' class='ui-btn ui-btn-raised ui-btn-inline waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\">CONSULTAR PRECIOS</a>";
+						lcstrHtml += "<a href='#' class='ui-btn ui-btn-raised ui-btn-inline waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', " + lcobjResponse.data[lcintI].profotocount + ");\">CONSULTAR PRECIOS</a>";
 						lcstrHtml += "</div>";
 						lcstrHtml += "</div>";
 					}
@@ -341,40 +415,53 @@ function GetContributeText(vlobjResponse) {
 	return lcstrHtml;
 }
 
-function GetOptions() {
+function GetNextImage() {
+	try {
+		if (pvintImageIndex < pvintImageCount) {
+			if (document.getElementById("imgFoto"))
+				document.getElementById("imgFoto").src = "img/loading.gif";
+			pvobjRequest = getXmlHttpRequestObject();
+			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETNEXTIMAGE&PROID=" + pvproID + "&INDEX=" + pvintImageIndex + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				console.log(">> " + lcstrRequest);
+				pvobjRequest.open("GET", lcstrRequest, true);
+				pvobjRequest.onreadystatechange = GetNextImageData;
+				pvobjRequest.send(null);
+			}
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (GetNextImage)");
+	}
+}
+
+function GetNextImageData() {
 	var lcstrHtml = "";
 	
 	try {
-		console.log("getoptions");
-		lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-		lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-		lcstrHtml += "<h3>Opciones</h3>";
-		lcstrHtml += "</div>";
-		lcstrHtml += "<div class='ui-body ui-body-a'>";
-		lcstrHtml += "<ul id='ulOpciones' data-role='listview' data-inset='true'>";
-		lcstrHtml += "<li class='ui-field-contain'>";
-		lcstrHtml += "<label for='txtEmail'>ID:</label>";
-		lcstrHtml += "<input type='text' name='txtEmail' id='txtEmail' value='" + pvstrAccount + "' data-clear-btn='true' placeholder='Email del usuario' disabled='disabled' />";
-		lcstrHtml += "</li>";
-		lcstrHtml += "<li class='ui-field-contain'>";
-		lcstrHtml += "<label for='txtDistancia'>Distancia m&aacute;xima a buscar (Km):</label>";
-		lcstrHtml += "<input type='number' data-type='range' name='txtDistancia' id='txtDistancia' value='" + pvintDistanciaMax + "' min='1' max='50' step='1' data-highlight='true'>";
-		lcstrHtml += "</li>";
-		lcstrHtml += "<li class='ui-field-contain'>";
-		lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='SaveOptions();'>Guardar</button>";
-		lcstrHtml += "</li>";
-		lcstrHtml += "</ul>";
-		lcstrHtml += "</div>";
-		lcstrHtml += "</div>";
-		document.getElementById("divContent").innerHTML = lcstrHtml;
-		$('#ulOpciones').listview().listview('refresh');
-		$('[type="text"]').textinput().textinput('refresh');
-		$('[type="button"]').button().button('refresh');
-		$('[type="number"]').slider().slider('refresh');
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				if (lcobjResponse.errcode == 0) {
+					pvintImageIndex++;
+					if (document.getElementById("imgFoto"))
+						document.getElementById("imgFoto").src = lcobjResponse.profoto;
+					if (document.getElementById("iPrev"))
+						document.getElementById("iPrev").style.visibility = "visible";
+					if (document.getElementById("iNext")) {
+						if (pvintImageIndex < pvintImageCount)
+							document.getElementById("iNext").style.visibility = "visible";
+						else
+							document.getElementById("iNext").style.visibility = "hidden";
+					}
+				}
+				else
+					MsgBox(lcobjResponse.error);
+			}
+		}
 	}
 	catch (ee) {
-		MsgBox("Error: " + ee.message + " (GetOptions)");
-		alert(ee.message);
+		MsgBox("Error: " + ee.message + " (GetNextImageData)");
 	}
 }
 
@@ -391,11 +478,65 @@ function GetPictureOptions() {
     return lcobjOptions;
 }
 
-function GetPrices(vlintProductID, vlstrProductName, vlstrProductPhoto, vlstrProductEAN) {
+function GetPreviousImage() {
+	try {
+		if (pvintImageIndex > 1) {
+			if (document.getElementById("imgFoto"))
+				document.getElementById("imgFoto").src = "img/loading.gif";
+			pvobjRequest = getXmlHttpRequestObject();
+			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPREVIOUSIMAGE&PROID=" + pvproID + "&INDEX=" + pvintImageIndex + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				console.log(">> " + lcstrRequest);
+				pvobjRequest.open("GET", lcstrRequest, true);
+				pvobjRequest.onreadystatechange = GetPreviousImageData;
+				pvobjRequest.send(null);
+			}
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (GetPreviousImage)");
+	}
+}
+
+function GetPreviousImageData() {
+	var lcstrHtml = "";
+	
+	try {
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				if (lcobjResponse.errcode == 0) {
+					pvintImageIndex--;
+					if (document.getElementById("imgFoto"))
+						document.getElementById("imgFoto").src = lcobjResponse.profoto;
+					if (document.getElementById("iNext"))
+						document.getElementById("iNext").style.visibility = "visible";
+					if (document.getElementById("iPrev")) {
+						if (pvintImageIndex > 1)
+							document.getElementById("iPrev").style.visibility = "visible";
+						else
+							document.getElementById("iPrev").style.visibility = "hidden";
+					}
+				}
+				else
+					MsgBox(lcobjResponse.error);
+			}
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (GetPreviousImageData)");
+	}
+}
+
+function GetPrices(vlintProductID, vlstrProductName, vlstrProductPhoto, vlstrProductEAN, vlintPhotoCount) {
+	var lcstrRequest = "";
+	
 	try {		
+		pvintImageIndex = 1;
 		pvproID = vlintProductID;
 		pvproNombre = vlstrProductName;
 		pvproEAN = vlstrProductEAN;
+		pvintImageCount = vlintPhotoCount;
 		if (vlstrProductPhoto != "") {
 			lcintPos = vlstrProductPhoto.indexOf("://");
 			if (lcintPos >= 0) {
@@ -404,22 +545,22 @@ function GetPrices(vlintProductID, vlstrProductName, vlstrProductPhoto, vlstrPro
 				if (lcintPos >= 0)
 					lcstrCredito = lcstrCredito.substr(0, lcintPos);
 				lcstrCredito = lcstrCredito.replace("www.", "").replace("WWW.", "");
-				pvproFoto = "<p align='center'><img src='" + vlstrProductPhoto + "' style='height: 200px' /><br />" + vlstrProductEAN + "<br />Foto: " + lcstrCredito + "</p>";
+				pvproFoto = "<p align='center'><img id='imgFoto' src='" + vlstrProductPhoto + "' style='height: 200px' onclick='TakePicture();' /><br />" + vlstrProductEAN + "<br />Foto: " + lcstrCredito + "</p>";
 			}
 			else
-				pvproFoto = "<p align='center'><img src='" + vlstrProductPhoto + "' style='height: 200px' /><br />" + vlstrProductEAN + "</p>";
+				pvproFoto = "<p align='center'><img id='imgFoto' src='" + vlstrProductPhoto + "' style='height: 200px' onclick='TakePicture();' /><br />" + vlstrProductEAN + "</p>";
 		}
 		else
-			pvproFoto = "<p align='center'><img src='img/noimage.jpg' style='cursor: pointer; height: 200px' onclick='TakePicture();' /><br />" + vlstrProductEAN + "</p>";
+			pvproFoto = "<p align='center'><img id='imgFoto' src='img/noimage.jpg' style='cursor: pointer; height: 200px' onclick='TakePicture();' /><br />" + vlstrProductEAN + "</p>";
 		
 		pvobjRequest = getXmlHttpRequestObject();
 		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
-			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRECIOS&PROID=" + vlintProductID + "&ACCOUNT=" + pvstrAccount + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&PID=" + Math.random();
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRECIOS&PROID=" + vlintProductID + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&PID=" + Math.random();
 			console.log(">> " + lcstrRequest);
 			pvobjRequest.open("GET", lcstrRequest, true);
 			pvobjRequest.onreadystatechange = GetPricesData;
 			pvobjRequest.send(null);
+			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
 		}
 	}
 	catch (ee) {
@@ -427,7 +568,7 @@ function GetPrices(vlintProductID, vlstrProductName, vlstrProductPhoto, vlstrPro
 	}
 }
 
-function GetPricesData(vlstrResponse) {
+function GetPricesData() {
 	var lcbooAddFooter = true;
 	var lcintI = 0;
 	var lcstrHtml = "";
@@ -444,8 +585,24 @@ function GetPricesData(vlstrResponse) {
 					lcstrHtml += "<h3>" + lcobjResponse.pronombre + "</h3>";
 					lcstrHtml += "</div>";
 					lcstrHtml += "<div id='divFoto' class='ui-body ui-body-a'>";
+					lcstrHtml += "<table style='width: 100%'>";
+					lcstrHtml += "<tr>";
+					lcstrHtml += "<td style='width: 10%; text-align: center; vertical-align: middle;'>";
+					if (pvintImageCount > 0)
+						lcstrHtml += "<i id='iPrev' class='fa fa-chevron-left fa-2x' style='cursor: pointer; visibility: hidden;' onclick='GetPreviousImage();'></i></td>";
+					else
+						lcstrHtml += "</td>";
+					lcstrHtml += "<td id='tdFoto' style='width: 80%; text-align: center; vertical-align: middle;'>";
 					if (pvproFoto != "")
 						lcstrHtml += pvproFoto;
+					lcstrHtml += "</td>";
+					lcstrHtml += "<td style='width: 10%; text-align: center; vertical-align: middle;'>";
+					if (pvintImageCount > 0)
+						lcstrHtml += "<i id='iNext' class='fa fa-chevron-right fa-2x' style='cursor: pointer; visibility: visible;' onclick='GetNextImage();'></i></td>";
+					else
+						lcstrHtml += "</td>";
+					lcstrHtml += "<tr>";
+					lcstrHtml += "</table>";
 					lcstrHtml += "</div>";
 					lcstrHtml += "</div>";
 					
@@ -497,8 +654,25 @@ function GetPricesData(vlstrResponse) {
 						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
 						lcstrHtml += "<h3>" + pvproNombre + "</h3>";
 						lcstrHtml += "</div>";
-						lcstrHtml += "<div class='ui-body ui-body-a'>";
-						lcstrHtml += "<p align='center'>" + pvproFoto + "</p>";
+						lcstrHtml += "<div id='divFoto' class='ui-body ui-body-a'>";
+						lcstrHtml += "<table style='width: 100%'>";
+						lcstrHtml += "<tr>";
+						lcstrHtml += "<td style='width: 10%; text-align: center; vertical-align: middle;'>";
+						if (pvintImageCount > 0)
+							lcstrHtml += "<i id='iPrev' class='fa fa-chevron-left fa-2x' style='cursor: pointer; visibility: hidden;' onclick='GetPreviousImage();'></i></td>";
+						else
+							lcstrHtml += "</td>";
+						lcstrHtml += "<td id='tdFoto' style='width: 80%; text-align: center; vertical-align: middle;'>";
+						if (pvproFoto != "")
+							lcstrHtml += pvproFoto;
+						lcstrHtml += "</td>";
+						lcstrHtml += "<td style='width: 10%; text-align: center; vertical-align: middle;'>";
+						if (pvintImageCount > 0)
+							lcstrHtml += "<i id='iNext' class='fa fa-chevron-right fa-2x' style='cursor: pointer; visibility: visible;' onclick='GetNextImage();'></i></td>";
+						else
+							lcstrHtml += "</td>";
+						lcstrHtml += "<tr>";
+						lcstrHtml += "</table>";
 						lcstrHtml += "</div>";
 						lcstrHtml += "</div>";
 					}
@@ -530,15 +704,17 @@ function GetPricesData(vlstrResponse) {
 }
 
 function GetPricexLocation(vlintPreID) {
+	var lcstrRequest = "";
+	
 	try {
 		pvobjRequest = getXmlHttpRequestObject();
 		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
-			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRECIOXUBICACION&PREID=" + vlintPreID + "&ACCOUNT=" + pvstrAccount + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&PID=" + Math.random();
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRECIOXUBICACION&PREID=" + vlintPreID + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&PID=" + Math.random();
 			console.log(">> " + lcstrRequest);
 			pvobjRequest.open("GET", lcstrRequest, true);
 			pvobjRequest.onreadystatechange = GetPricexLocationData;
 			pvobjRequest.send(null);
+			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
 		}
 	}
 	catch (ee) {
@@ -546,7 +722,7 @@ function GetPricexLocation(vlintPreID) {
 	}
 }
 
-function GetPricexLocationData(vlstrResponse) {
+function GetPricexLocationData() {
 	var lcintI = 0;
 	var lcstrHtml = "";
 	
@@ -600,10 +776,153 @@ function GetStorage(vlstrVariable, vlstrDefault) {
 	return lcstrResponse;
 }
 
+function GetUser() {
+	var lcstrHtml = "";
+	
+	try {
+		if (pvstrAccount != "" && pvstrDeviceID != "") {
+			pvobjRequest = getXmlHttpRequestObject();
+			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETUSER&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				console.log(">> " + lcstrRequest);
+				pvobjRequest.open("GET", lcstrRequest, true);
+				pvobjRequest.onreadystatechange = GetUserData;
+				pvobjRequest.send(null);
+				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+			}
+		}
+		else {
+			lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+			lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+			lcstrHtml += "<h3>Preferencias del usuario</h3>";
+			lcstrHtml += "</div>";
+			lcstrHtml += "<div class='ui-body ui-body-a'>";
+			lcstrHtml += "<ul id='ulOpciones' data-role='listview' data-inset='true'>";
+			lcstrHtml += "<li class='ui-field-contain'>";
+			lcstrHtml += "<label for='txtEmail'>Email:</label>";
+			lcstrHtml += "<input type='email' name='txtEmail' id='txtEmail' value='' data-clear-btn='true' placeholder='Email del usuario' />";
+			lcstrHtml += "</li>";
+			lcstrHtml += "<li class='ui-field-contain'>";
+			lcstrHtml += "<label for='txtDeviceID'>ID dispositivo:</label>";
+			lcstrHtml += "<input type='text' name='txtDeviceID' id='txtDeviceID' value='' data-clear-btn='true' placeholder='ID del dispositivo' disabled='disabled' />";
+			lcstrHtml += "</li>";
+			lcstrHtml += "<li class='ui-field-contain'>";
+			lcstrHtml += "<label for='txtAlias'>Seud&oacute;nimo:</label>";
+			lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
+			lcstrHtml += "</li>";
+			lcstrHtml += "<li class='ui-field-contain'>";
+			lcstrHtml += "<label for='txtDistancia'>Distancia máxima a buscar (Km):</label>";
+			lcstrHtml += "<input type='number' data-type='range' name='txtDistancia' id='txtDistancia' value='" + pvintDistanciaMax + "' min='1' max='50' step='1' data-highlight='true'>";
+			lcstrHtml += "</li>";
+			lcstrHtml += "<li class='ui-field-contain'>";
+			lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Register();'>Registrarme</button>";
+			lcstrHtml += "</li>";
+			lcstrHtml += "</ul>";
+			lcstrHtml += "</div>";
+			lcstrHtml += "</div>";
+			lcstrHtml += "<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />";
+			document.getElementById("divContent").innerHTML = lcstrHtml;
+			$('#ulOpciones').listview().listview('refresh');
+			$('[type="text"]').textinput().textinput('refresh');
+			$('[type="email"]').textinput().textinput('refresh');
+			$('[type="button"]').button().button('refresh');
+			$('[type="number"]').slider().slider('refresh');
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (GetUser)");
+	}
+}
+
+function GetUserData() {
+	var lcstrHtml = "";
+	
+	try {
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				if (lcobjResponse.errcode == 0) {
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>Preferencias del usuario</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					lcstrHtml += "<ul id='ulOpciones' data-role='listview' data-inset='true'>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<label for='txtEmail'>Email:</label>";
+					lcstrHtml += "<input type='email' name='txtEmail' id='txtEmail' value='" + lcobjResponse.email + "' data-clear-btn='true' placeholder='Email del usuario' disabled='disabled' />";
+					lcstrHtml += "</li>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<label for='txtDeviceID'>ID dispositivo:</label>";
+					lcstrHtml += "<input type='text' name='txtDeviceID' id='txtDeviceID' value='" + lcobjResponse.deviceid + "' data-clear-btn='true' placeholder='ID del dispositivo' disabled='disabled' />";
+					lcstrHtml += "</li>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<label for='txtAlias'>Seud&oacute;nimo:</label>";
+					lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='" + lcobjResponse.alias + "' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
+					lcstrHtml += "</li>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<label for='txtDistancia'>Distancia máxima a buscar (Km):</label>";
+					lcstrHtml += "<input type='number' data-type='range' name='txtDistancia' id='txtDistancia' value='" + pvintDistanciaMax + "' min='1' max='50' step='1' data-highlight='true'>";
+					lcstrHtml += "</li>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='UpdateUser();'>Guardar</button>";
+					lcstrHtml += "</li>";
+					lcstrHtml += "</ul>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />";
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+					$('#ulOpciones').listview().listview('refresh');
+					$('[type="text"]').textinput().textinput('refresh');
+					$('[type="email"]').textinput().textinput('refresh');
+					$('[type="button"]').button().button('refresh');
+					$('[type="number"]').slider().slider('refresh');
+				}
+				else {
+					if (lcobjResponse.errcode == 7) {
+						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+						lcstrHtml += "<h3>Registro</h3>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "<div class='ui-body ui-body-a'>";
+						lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
+						lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
+						lcstrHtml += "<li class='ui-field-contain'>";
+						lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
+						lcstrHtml += "</li>";
+						lcstrHtml += "</ul>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "</div>";
+						document.getElementById("divContent").innerHTML = lcstrHtml;
+						$('#ulHome').listview().listview('refresh');
+						$('[type="button"]').button().button('refresh');
+					}
+				}
+			}
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (GetUserData)");
+	}
+}
+
 function GetUserLocation(position) {
+	var lcstrRequest = "";
+	
 	try {
 		pvdblLatitud = position.coords.latitude; 
 		pvdblLongitud = position.coords.longitude;
+		if (pvbooStartup && pvstrAccount != "" && pvstrDeviceID != "") {
+			pvobjRequest = getXmlHttpRequestObject();
+			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=STARTUP&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				console.log(">> " + lcstrRequest);
+				pvobjRequest.open("GET", lcstrRequest, true);
+				pvobjRequest.onreadystatechange = StartupData;
+				pvobjRequest.send(null);
+			}
+			pvbooStartup = false;
+		}
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (GetUserLocation)");
@@ -616,6 +935,16 @@ function GetUserLocationError(error) {
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (GetUserLocationError)");
+	}
+}
+			
+function Home() {
+	try {
+		pvintNivel = 1;
+		setTimeout(Back, 100);
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (Home)");
 	}
 }
 
@@ -632,18 +961,20 @@ function MsgBox(vlstrMessage) {
 }
 
 function NextPage() {
+	var lcstrRequest = "";
+	
 	try {
 		switch (pvstrCommand) {
 			case "GETPRODUCTOS":
 				pvintPage++;
 				pvobjRequest = getXmlHttpRequestObject();
 				if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-					document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
-					lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random();
+					lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 					console.log(">> " + lcstrRequest);
 					pvobjRequest.open("GET", lcstrRequest, true);
 					pvobjRequest.onreadystatechange = SearchData;
 					pvobjRequest.send(null);
+					document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
 				}
 				break;
 		}
@@ -654,6 +985,8 @@ function NextPage() {
 }
 
 function PreviousPage() {
+	var lcstrRequest = "";
+	
 	try {
 		switch (pvstrCommand) {
 			case "GETPRODUCTOS":
@@ -661,12 +994,12 @@ function PreviousPage() {
 					pvintPage--;
 					pvobjRequest = getXmlHttpRequestObject();
 					if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-						document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
-						lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random();
+						lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 						console.log(">> " + lcstrRequest);
 						pvobjRequest.open("GET", lcstrRequest, true);
 						pvobjRequest.onreadystatechange = SearchData;
 						pvobjRequest.send(null);
+						document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
 					}
 				}
 				break;
@@ -676,42 +1009,107 @@ function PreviousPage() {
 		MsgBox("Error: " + ee.message + " (PreviousPage)");
 	}
 }
-
-function SaveOptions() {
+			
+function Register() {
 	var lcstrError = "";
 	
 	try {
 		if ("" + document.getElementById("txtEmail").value == "" && lcstrError == "")
-			MsgBox("Email es requerido.");
-		else {
-			SetStorage("AH_EMAIL", "" + document.getElementById("txtEmail").value);
-			pvstrAccount = "" + document.getElementById("txtEmail").value;
-			SetStorage("AH_DISTANCIAMAX", "" + document.getElementById("txtDistancia").value);
-			pvintDistanciaMax = parseInt("" + document.getElementById("txtDistancia").value);
-			MsgBox("La informaci&oacute;n ha sido guardada exitosamente.");
-			pvintNivel = 1;
-			setTimeout(Back, 100);
+			lcstrError = "El campo Email es requerido.";
+		if ("" + document.getElementById("txtDeviceID").value == "" && lcstrError == "")
+			lcstrError = "El campo ID del dispositivo es requerido.";
+		if (lcstrError == "") {
+			pvobjRequest = getXmlHttpRequestObject();
+			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=REGISTER&ACCOUNT=" + document.getElementById("txtEmail").value + "&DEVICEID=" + document.getElementById("txtDeviceID").value + "&ALIAS=" + document.getElementById("txtAlias").value + "&PID=" + Math.random();
+				console.log(">> " + lcstrRequest);
+				pvobjRequest.open("GET", lcstrRequest, true);
+				pvobjRequest.onreadystatechange = RegisterData;
+				pvobjRequest.send(null);
+				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+			}
+		}
+		else
+			MsgBox(lcstrError);
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (Register)");
+	}
+}
+
+function RegisterData() {
+	var lcstrHtml = "";
+	
+	try {
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				if (lcobjResponse.errcode == 0) {
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>Registro</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
+					lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
+					lcstrHtml += "</li>";
+					lcstrHtml += "</ul>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "</div>";
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+					$('#ulHome').listview().listview('refresh');
+					$('[type="button"]').button().button('refresh');
+				}
+				else {
+					if (lcobjResponse.errcode == 99) {
+						SetStorage("AH_EMAIL", "" + lcobjResponse.email);
+						pvstrAccount = GetStorage("AH_EMAIL", "");
+						SetStorage("AH_DEVICEID", "" + lcobjResponse.deviceid);
+						pvstrDeviceID = GetStorage("AH_DEVICEID", "");				
+					}
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>Registro</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
+					lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
+					lcstrHtml += "</li>";
+					lcstrHtml += "</ul>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "</div>";
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+					$('#ulHome').listview().listview('refresh');
+					$('[type="button"]').button().button('refresh');
+				}
+			}
 		}
 	}
 	catch (ee) {
-		MsgBox("Error: " + ee.message + " (SaveOptions)");
+		MsgBox("Error: " + ee.message + " (RegisterData)");
 	}
 }
 
 function Scan() {
+	var lcstrRequest = "";
+	
 	try {
-		if (pvstrAccount != "") {
+		if (pvstrAccount != "" && pvstrDeviceID != "") {
 			cordova.plugins.barcodeScanner.scan(
 				function (result) {
 					if (result.text != "") {
 						pvobjRequest = getXmlHttpRequestObject();
 						if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-							document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
-							lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETCODIGO&PRO=" + result.text + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random();
+							lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETCODIGO&PRO=" + result.text + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 							console.log(">> " + lcstrRequest);
 							pvobjRequest.open("GET", lcstrRequest, true);
 							pvobjRequest.onreadystatechange = GetBarCodeData;
 							pvobjRequest.send(null);
+							document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
 						}
 					}
 				},
@@ -722,7 +1120,7 @@ function Scan() {
 					preferFrontCamera : false, // iOS and Android
 					showFlipCameraButton : true, // iOS and Android
 					showTorchButton : true, // iOS and Android
-					torchOn: true, // Android, launch with the torch switched on (if available)
+					torchOn: false, // Android, launch with the torch switched on (if available)
 					prompt : "Posicione el c&oacute;digo de barras dentro del area", // Android
 					resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
 					formats : "EAN_13,EAN_8", // default: all but PDF_417 and RSS_EXPANDED
@@ -734,7 +1132,7 @@ function Scan() {
 		}
 		else {
 			MsgBox("Para poder ejecutar esta acci&oacute;n debe registrase primero.");
-			setTimeout(GetOptions, 100);
+			setTimeout(GetUser, 100);
 		}
 	}
 	catch (ee) {
@@ -747,19 +1145,19 @@ function Search() {
 	
 	try {
 		if (event.key == "Enter" || event.keyCode == 13) {
-			if (pvstrAccount != "") {
+			if (pvstrAccount != "" && pvstrDeviceID != "") {
 				if (("" + document.getElementById("txtBuscar").value).length >= 3) {
 					pvintPage = 0;
 					pvstrCommand = "GETPRODUCTOS";
 					pvstrSearchData = "" + document.getElementById("txtBuscar").value;
 					pvobjRequest = getXmlHttpRequestObject();
 					if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-						document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
-						lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=0&PRO=" + window.btoa("" + document.getElementById("txtBuscar").value) + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random();
+						lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=0&PRO=" + window.btoa("" + document.getElementById("txtBuscar").value) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 						console.log(">> " + lcstrRequest);
 						pvobjRequest.open("GET", lcstrRequest, true);
 						pvobjRequest.onreadystatechange = SearchData;
 						pvobjRequest.send(null);
+						document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
 					}
 				}
 				else
@@ -767,7 +1165,7 @@ function Search() {
 			}
 			else {
 				MsgBox("Para poder ejecutar esta acci&oacute;n debe registrase primero.");
-				setTimeout(GetOptions, 100);
+				setTimeout(GetUser, 100);
 			}
 		}
 	}
@@ -802,14 +1200,14 @@ function SearchData() {
 						lcstrHtml += "<div class='nd2-card card-media-right card-media-small'>";
 						lcstrHtml += "<div class='card-media'>";
 						if ("" + lcobjResponse.data[lcintI].profoto != "")
-							lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' style='cursor: pointer' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\" />";
+							lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' style='cursor: pointer' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', " + lcobjResponse.data[lcintI].profotocount + ");\" />";
 						else
-							lcstrHtml += "<img src='img/noimage.jpg' style='cursor: pointer' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\" />";
+							lcstrHtml += "<img src='img/noimage.jpg' style='cursor: pointer' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', " + lcobjResponse.data[lcintI].profotocount + ");\" />";
 						lcstrHtml += "</div>";
 						lcstrHtml += "<div class='card-title has-supporting-text'>";
 						lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.data[lcintI].pronombre + "</b></h5>";
 						lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].proean + "</h5><br />";
-						lcstrHtml += "<a href='#' class='ui-btn ui-btn-raised ui-btn-inline waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "');\">CONSULTAR PRECIOS</a>";
+						lcstrHtml += "<a href='#' class='ui-btn ui-btn-raised ui-btn-inline waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', " + lcobjResponse.data[lcintI].profotocount + ");\">CONSULTAR PRECIOS</a>";
 						lcstrHtml += "</div>";
 						lcstrHtml += "</div>";
 					}
@@ -828,9 +1226,16 @@ function SearchData() {
 					lcstrHtml += "</div>";
 					lcstrHtml += "<div class='ui-body ui-body-a'>";
 					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
+					lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
+					lcstrHtml += "</li>";
+					lcstrHtml += "</ul>";
 					lcstrHtml += "</div>";
 					lcstrHtml += "</div>";
 					document.getElementById("divContent").innerHTML = lcstrHtml;
+					$('#ulHome').listview().listview('refresh');
+					$('[type="button"]').button().button('refresh');
 				}
 			}
 		}
@@ -1021,6 +1426,72 @@ function ShowTerms() {
 	}
 }
 
+function StartupData() {
+	var lcintI = 0;
+	var lcstrHtml = "";
+	
+	try {
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				if (lcobjResponse.errcode == 0) {
+					if (lcobjResponse.data.length > 0) {
+						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+						lcstrHtml += "<h3>" + lcobjResponse.title + "</h3>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "<div class='ui-body ui-body-a'>";
+						for (lcintI = 0; lcintI < lcobjResponse.data.length; lcintI++) {
+							lcstrHtml += "<div class='nd2-card card-media-right card-media-small'>";
+							lcstrHtml += "<div class='card-media'>";
+							if ("" + lcobjResponse.data[lcintI].profoto != "")
+								lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' />";
+							else
+								lcstrHtml += "<img src='images/noimage.jpg' />";
+							lcstrHtml += "</div>";
+							lcstrHtml += "<div class='card-title has-supporting-text'>";
+							lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.data[lcintI].pronombre + "</b></h5>";
+							lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].proean + "</h5><br />";
+							if ("" + lcobjResponse.data[lcintI].prevalorpromo != "0")
+								lcstrHtml += "<h5 class='card-subtitle'><strike>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + "</strike>&nbsp;<font color='red'>$" + (lcobjResponse.data[lcintI].prevalorpromo).formatMoney(0, ',', '.') + "</font> (" + lcobjResponse.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' title='Es precio es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' style='cursor: pointer;' title='Es precio NO es correcto.' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 0);'></i></h5>";
+							else
+								lcstrHtml += "<h5 class='card-subtitle'>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + " (" + lcobjResponse.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' style='cursor: pointer;' title='Es precio es correcto.' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' title='Es precio NO es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 0);'></i></h5>";
+							lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].prefecha + "<br />" + lcobjResponse.data[lcintI].sucnombre + "</h5>";	
+							lcstrHtml += "<div class='card-action'>";
+							lcstrHtml += "<div class='row between-xs'>";
+							lcstrHtml += "<div class='col-xs-4'>";
+							lcstrHtml += "<div class='box'>";
+							if (lcobjResponse.data[lcintI].sucdistancia > 0.0)
+								lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button' onclick='GetPricexLocation(" + lcobjResponse.data[lcintI].preid + ");'><i class='fa fa-map-marker' style='cursor: pointer;'></i></a>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "<div class='col-xs-8 align-right'>";
+							lcstrHtml += "<div class='box'>";
+							if (lcobjResponse.data[lcintI].sucdistancia >= 0.0)
+								lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline'>" + (lcobjResponse.data[lcintI].sucdistancia).formatMoney(0, ',', '.') + " metros</a>";
+							else
+								lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline'>WEB</a>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "</div>";
+							lcstrHtml += "</div>";
+						}
+						lcstrHtml += "</div>";
+						lcstrHtml += "</div>";
+						pvstrBack[pvintNivel] = lcstrHtml;
+						document.getElementById("divContent").innerHTML = lcstrHtml;
+					}
+				}
+			}
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (StartupData)");
+	}
+}
+
 function TakePicture() {
     var lcobjOptions = GetPictureOptions();
 
@@ -1040,6 +1511,128 @@ function TakePicture() {
 	}
 }
 
+function TutorialPage() {
+	var lcstrHtml = "";
+	
+	try {
+		lcstrHtml += "<table style=\"width: 100%; height: 80%; font-family: 'Roboto', sans-serif;\">";
+		lcstrHtml += "<tr style='height: 100%'>";
+		lcstrHtml += "<td id='tdTutPrev' align='center' style='width: 10%'><i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i></td>";
+		lcstrHtml += "<td id='tdTutText' align='center' style='width: 80%'>";
+		lcstrHtml += "<h3>Ahorra es una aplicación que te permite encontrar y comparar los precios de muchos productos en diferentes establecimientos y así tomar una decisión de compra inteligente.</h3>";
+		lcstrHtml += "</td>";
+		lcstrHtml += "<td id='tdTutNext' align='center' style='width: 10%'><i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i></td>";
+		lcstrHtml += "</tr>";
+		lcstrHtml += "<tr style='height: 50px'>";
+		lcstrHtml += "<td colspan='3' align='center' style='width: 100%'>";
+		lcstrHtml += "<i id='i1' class='fa fa-circle' onclick='SetTutorialPage(1, 0);'></i>&nbsp;";
+		lcstrHtml += "<i id='i2' class='fa fa-circle-o' onclick='SetTutorialPage(2, 0);'></i>&nbsp;";
+		lcstrHtml += "<i id='i3' class='fa fa-circle-o' onclick='SetTutorialPage(3, 0);'></i>&nbsp;";
+		lcstrHtml += "<i id='i4' class='fa fa-circle-o' onclick='SetTutorialPage(4, 0);'></i>&nbsp;";
+		lcstrHtml += "<i id='i5' class='fa fa-circle-o' onclick='SetTutorialPage(5, 0);'></i>&nbsp;";
+		lcstrHtml += "<i id='i6' class='fa fa-circle-o' onclick='SetTutorialPage(6, 0);'></i>&nbsp;";
+		lcstrHtml += "<i id='i7' class='fa fa-circle-o' onclick='SetTutorialPage(7, 0);'></i>&nbsp;";
+		lcstrHtml += "<i id='i8' class='fa fa-circle-o' onclick='SetTutorialPage(8, 0);'></i>";
+		lcstrHtml += "</td>";
+		lcstrHtml += "</tr>";
+		lcstrHtml += "</table>";
+		lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab ui-btn-fab-bottom ui-btn-raised clr-primary' data-role='toast' data-toast-message='Preferencias del sistema'>";
+		lcstrHtml += "<i class='fa fa-cog' onclick='GetUser();'></i>";
+		lcstrHtml += "</a>";
+		document.getElementById("divContent").innerHTML = lcstrHtml;
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (TutorialPage)");
+	}
+}
+			
+function UpdateUser() {
+	try {
+		pvobjRequest = getXmlHttpRequestObject();
+		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=UPDATEUSER&ALIAS=" + window.btoa("" + document.getElementById("txtAlias").value) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+			console.log(">> " + lcstrRequest);
+			pvobjRequest.open("GET", lcstrRequest, true);
+			pvobjRequest.onreadystatechange = UpdateUserData;
+			pvobjRequest.send(null);
+			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (UpdateUser)");
+	}
+}
+
+function UpdateUserData() {
+	var lcstrHtml = "";
+	
+	try {
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				if (lcobjResponse.errcode == 0) {
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>Preferencias del usuario</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					lcstrHtml += "<ul id='ulOpciones' data-role='listview' data-inset='true'>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<label for='txtEmail'>Email:</label>";
+					lcstrHtml += "<input type='email' name='txtEmail' id='txtEmail' value='" + lcobjResponse.email + "' data-clear-btn='true' placeholder='Email del usuario' disabled='disabled' />";
+					lcstrHtml += "</li>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<label for='txtDeviceID'>ID dispositivo:</label>";
+					lcstrHtml += "<input type='text' name='txtDeviceID' id='txtDeviceID' value='" + lcobjResponse.deviceid + "' data-clear-btn='true' placeholder='ID del dispositivo' disabled='disabled' />";
+					lcstrHtml += "</li>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<label for='txtAlias'>Seud&oacute;nimo:</label>";
+					lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='" + lcobjResponse.alias + "' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
+					lcstrHtml += "</li>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<label for='txtDistancia'>Distancia máxima a buscar (Km):</label>";
+					lcstrHtml += "<input type='number' data-type='range' name='txtDistancia' id='txtDistancia' value='" + pvintDistanciaMax + "' min='1' max='50' step='1' data-highlight='true'>";
+					lcstrHtml += "</li>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='UpdateUser();'>Guardar</button>";
+					lcstrHtml += "</li>";
+					lcstrHtml += "</ul>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />";
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+					$('#ulOpciones').listview().listview('refresh');
+					$('[type="text"]').textinput().textinput('refresh');
+					$('[type="email"]').textinput().textinput('refresh');
+					$('[type="button"]').button().button('refresh');
+					$('[type="number"]').slider().slider('refresh');
+				}
+				else {
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>Preferencias del usuario</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
+					lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
+					lcstrHtml += "</li>";
+					lcstrHtml += "</ul>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "</div>";
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+					$('#ulHome').listview().listview('refresh');
+					$('[type="button"]').button().button('refresh');
+				}
+			}
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (UpdateUserData)");
+	}
+}
+
 function UploadPicture(vlobjImageUri) {
 	try {
 		window.resolveLocalFileSystemURL(
@@ -1054,7 +1647,7 @@ function UploadPicture(vlobjImageUri) {
 				var lcobjFileTransfer = new FileTransfer();
 				lcobjFileTransfer.upload(
 					fileEntry.nativeURL, 
-					encodeURI("http://www.brainatoms.com/ahorra/tran.php?CMD=FILEUPLOAD&PROID=" + pvproID + "&PROEAN=" + pvproEAN + "&uploaded_file=" + pvproEAN + ".png&filename=" + pvproEAN + ".png&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random()), 
+					encodeURI("http://www.brainatoms.com/ahorra/tran.php?CMD=FILEUPLOAD&PROID=" + pvproID + "&PROEAN=" + pvproEAN + "&uploaded_file=" + pvproEAN + ".png&filename=" + pvproEAN + ".png&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random()), 
 					function(r) {
 						var lcobjResponse = JSON.parse(r.response);
 						MsgBox(lcobjResponse.error);
@@ -1074,15 +1667,17 @@ function UploadPicture(vlobjImageUri) {
 }
 
 function ValidatePrice(vlintPreID, vlintValoracion) {
+	var lcstrRequest = "";
+	
 	try {
 		pvobjRequest = getXmlHttpRequestObject();
 		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-			document.getElementById("lblValoracion").innerHTML = "<img src='css/themes/default/images/ajax-loader.gif' style='height: 20px' />";
-			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=VALIDATEPRECIO&PREID=" + vlintPreID + "&VALORACION=" + vlintValoracion + "&ACCOUNT=" + pvstrAccount + "&PID=" + Math.random();
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=VALIDATEPRECIO&PREID=" + vlintPreID + "&VALORACION=" + vlintValoracion + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 			console.log(">> " + lcstrRequest);
 			pvobjRequest.open("GET", lcstrRequest, true);
 			pvobjRequest.onreadystatechange = ValidatePriceData;
 			pvobjRequest.send(null);
+			document.getElementById("lblValoracion").innerHTML = "<img src='css/themes/default/images/ajax-loader.gif' style='height: 20px' />";
 		}
 	}
 	catch (ee) {
@@ -1090,7 +1685,7 @@ function ValidatePrice(vlintPreID, vlintValoracion) {
 	}
 }
 
-function ValidatePriceData(vlstrResponse) {
+function ValidatePriceData() {
 	try {
 		if (pvobjRequest.readyState == 4) {
 			if (pvobjRequest.status == 200) {
