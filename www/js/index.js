@@ -472,7 +472,7 @@ function GetPictureOptions() {
         sourceType: Camera.PictureSourceType.CAMERA,
         encodingType: Camera.EncodingType.JPEG,
         mediaType: Camera.MediaType.PICTURE,
-        allowEdit: true,
+        allowEdit: false,
         correctOrientation: true  //Corrects Android orientation quirks
     }
     return lcobjOptions;
@@ -1548,6 +1548,8 @@ function TutorialPage() {
 			
 function UpdateUser() {
 	try {
+		SetStorage("AH_DISTANCIAMAX", "" + document.getElementById("txtDistancia").value);
+		pvintDistanciaMax = parseInt("" + document.getElementById("txtDistancia").value);
 		pvobjRequest = getXmlHttpRequestObject();
 		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
 			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=UPDATEUSER&ALIAS=" + window.btoa("" + document.getElementById("txtAlias").value) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
