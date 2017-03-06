@@ -588,7 +588,7 @@ function GetPricesData() {
 					lcstrHtml += "<table style='width: 100%'>";
 					lcstrHtml += "<tr>";
 					lcstrHtml += "<td style='width: 10%; text-align: center; vertical-align: middle;'>";
-					if (pvintImageCount > 0)
+					if (pvintImageCount > 1)
 						lcstrHtml += "<i id='iPrev' class='fa fa-chevron-left fa-2x' style='cursor: pointer; visibility: hidden;' onclick='GetPreviousImage();'></i></td>";
 					else
 						lcstrHtml += "</td>";
@@ -597,7 +597,7 @@ function GetPricesData() {
 						lcstrHtml += pvproFoto;
 					lcstrHtml += "</td>";
 					lcstrHtml += "<td style='width: 10%; text-align: center; vertical-align: middle;'>";
-					if (pvintImageCount > 0)
+					if (pvintImageCount > 1)
 						lcstrHtml += "<i id='iNext' class='fa fa-chevron-right fa-2x' style='cursor: pointer; visibility: visible;' onclick='GetNextImage();'></i></td>";
 					else
 						lcstrHtml += "</td>";
@@ -658,7 +658,7 @@ function GetPricesData() {
 						lcstrHtml += "<table style='width: 100%'>";
 						lcstrHtml += "<tr>";
 						lcstrHtml += "<td style='width: 10%; text-align: center; vertical-align: middle;'>";
-						if (pvintImageCount > 0)
+						if (pvintImageCount > 1)
 							lcstrHtml += "<i id='iPrev' class='fa fa-chevron-left fa-2x' style='cursor: pointer; visibility: hidden;' onclick='GetPreviousImage();'></i></td>";
 						else
 							lcstrHtml += "</td>";
@@ -667,7 +667,7 @@ function GetPricesData() {
 							lcstrHtml += pvproFoto;
 						lcstrHtml += "</td>";
 						lcstrHtml += "<td style='width: 10%; text-align: center; vertical-align: middle;'>";
-						if (pvintImageCount > 0)
+						if (pvintImageCount > 1)
 							lcstrHtml += "<i id='iNext' class='fa fa-chevron-right fa-2x' style='cursor: pointer; visibility: visible;' onclick='GetNextImage();'></i></td>";
 						else
 							lcstrHtml += "</td>";
