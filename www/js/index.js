@@ -87,6 +87,7 @@ var app = {
 		else {
 			if (AdMob) AdMob.prepareInterstitial( { adId:admobid.interstitial, autoShow:true } );
 		}
+		document.addEventListener("backbutton", Back, false);
     }
 };
 
@@ -124,25 +125,37 @@ function getXmlHttpRequestObject() {
 
 function Back() {
 	try {
-		if (pvintNivel > 0)
+		if (pvintNivel > 0) {
 			pvintNivel--;
-		document.getElementById("divContent").innerHTML = pvstrBack[pvintNivel];
-		if (document.getElementById("ulProductos"))
-			$('#ulProductos').listview().listview('refresh');
-		if (document.getElementById("ulContribuir"))
-			$('#ulContribuir').listview().listview('refresh');
-		if (document.getElementById("ulPrecios"))
-			$('#ulPrecios').listview().listview('refresh');
-		if (document.getElementById("txtUbicacion"))
-			$('#txtUbicacion').selectmenu().selectmenu("refresh");
-		$('[type="text"]').textinput().textinput('refresh');
-		$('[type="button"]').button().button('refresh');
-		if (pvintNivel == 0) {
-			if (document.getElementById("tdTutText"))
-				SetTutorialPage(pvintTutorialPage, 0);
-			else
-				TutorialPage();
-			document.getElementById("txtBuscar").value = "";
+			document.getElementById("divContent").innerHTML = pvstrBack[pvintNivel];
+			if (document.getElementById("ulProductos"))
+				$('#ulProductos').listview().listview('refresh');
+			if (document.getElementById("ulContribuir"))
+				$('#ulContribuir').listview().listview('refresh');
+			if (document.getElementById("ulPrecios"))
+				$('#ulPrecios').listview().listview('refresh');
+			if (document.getElementById("txtUbicacion"))
+				$('#txtUbicacion').selectmenu().selectmenu("refresh");
+			$('[type="text"]').textinput().textinput('refresh');
+			$('[type="button"]').button().button('refresh');
+			if (pvintNivel == 0) {
+				if (document.getElementById("tdTutText"))
+					SetTutorialPage(pvintTutorialPage, 0);
+				else
+					TutorialPage();
+				document.getElementById("txtBuscar").value = "";
+			}
+		}
+		else {
+			navigator.notification.confirm(
+				"Salir de la aplicación",
+				function (button) {
+					if (button == 1)
+						navigator.app.exitApp();
+				},
+				'Salir',
+				'Ok, Cancelar'
+			);
 		}
 	}
 	catch (ee) {
@@ -817,7 +830,7 @@ function GetUser() {
 			lcstrHtml += "</li>";
 			lcstrHtml += "<li class='ui-field-contain'>";
 			lcstrHtml += "<label for='txtAlias'>Seud&oacute;nimo:</label>";
-			lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
+			lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='' maxlength='10' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
 			lcstrHtml += "</li>";
 			lcstrHtml += "<li class='ui-field-contain'>";
 			lcstrHtml += "<label for='txtDistancia'>Distancia máxima a buscar (Km):</label>";
@@ -867,7 +880,7 @@ function GetUserData() {
 					lcstrHtml += "</li>";
 					lcstrHtml += "<li class='ui-field-contain'>";
 					lcstrHtml += "<label for='txtAlias'>Seud&oacute;nimo:</label>";
-					lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='" + lcobjResponse.alias + "' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
+					lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='" + lcobjResponse.alias + "' maxlength='10' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
 					lcstrHtml += "</li>";
 					lcstrHtml += "<li class='ui-field-contain'>";
 					lcstrHtml += "<label for='txtDistancia'>Distancia máxima a buscar (Km):</label>";
@@ -1622,7 +1635,7 @@ function UpdateUserData() {
 					lcstrHtml += "</li>";
 					lcstrHtml += "<li class='ui-field-contain'>";
 					lcstrHtml += "<label for='txtAlias'>Seud&oacute;nimo:</label>";
-					lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='" + lcobjResponse.alias + "' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
+					lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='" + lcobjResponse.alias + "' maxlength='10' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
 					lcstrHtml += "</li>";
 					lcstrHtml += "<li class='ui-field-contain'>";
 					lcstrHtml += "<label for='txtDistancia'>Distancia máxima a buscar (Km):</label>";
