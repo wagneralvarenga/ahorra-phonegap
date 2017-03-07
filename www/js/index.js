@@ -34,6 +34,7 @@ var pvstrFunction = "";
 var pvstrCommand = "";
 var pvstrSearchData = "";
 var pvstrBack = ["", "", ""];
+var pvpreID = "";
 var pvproNombre = "";
 var pvproID = "";
 var pvproEAN = "";
@@ -634,9 +635,9 @@ function GetPricesData() {
 							lcstrHtml += "<div class='card-title has-supporting-text'>";
 						}
 						if ("" + lcobjResponse.data[lcintI].prevalorpromo != "0")
-							lcstrHtml += "<h3 class='card-primary-title'><strike>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + "</strike>&nbsp;<font color='red'>$" + (lcobjResponse.data[lcintI].prevalorpromo).formatMoney(0, ',', '.') + "</font> (" + lcobjResponse.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' title='Es precio es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' style='cursor: pointer;' title='Es precio NO es correcto.' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 0);'></i></h3>";
+							lcstrHtml += "<h3 class='card-primary-title'><strike>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + "</strike>&nbsp;<font color='red'>$" + (lcobjResponse.data[lcintI].prevalorpromo).formatMoney(0, ',', '.') + "</font> (" + lcobjResponse.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' title='Es precio es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion" + lcobjResponse.data[lcintI].preid + "'>" + lcobjResponse.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' style='cursor: pointer;' title='Es precio NO es correcto.' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 0);'></i></h3>";
 						else
-							lcstrHtml += "<h3 class='card-primary-title'>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + " (" + lcobjResponse.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' style='cursor: pointer;' title='Es precio es correcto.' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' title='Es precio NO es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 0);'></i></h3>";
+							lcstrHtml += "<h3 class='card-primary-title'>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + " (" + lcobjResponse.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' style='cursor: pointer;' title='Es precio es correcto.' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion" + lcobjResponse.data[lcintI].preid + "'>" + lcobjResponse.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' title='Es precio NO es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 0);'></i></h3>";
 						lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].prefecha + "<br />" + lcobjResponse.data[lcintI].sucnombre + "</h5>";
 						lcbooAddFooter = true;
 						if ((lcintI + 1) < lcobjResponse.data.length) {
@@ -1481,9 +1482,9 @@ function StartupData() {
 							lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.promo.data[lcintI].pronombre + "</b></h5>";
 							lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.promo.data[lcintI].proean + "</h5><br />";
 							if ("" + lcobjResponse.promo.data[lcintI].prevalorpromo != "0")
-								lcstrHtml += "<h5 class='card-subtitle'><strike>$" + (lcobjResponse.promo.data[lcintI].prevalor).formatMoney(0, ',', '.') + "</strike>&nbsp;<font color='red'>$" + (lcobjResponse.promo.data[lcintI].prevalorpromo).formatMoney(0, ',', '.') + "</font> (" + lcobjResponse.promo.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' title='Es precio es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.promo.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' style='cursor: pointer;' title='Es precio NO es correcto.' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 0);'></i></h5>";
+								lcstrHtml += "<h5 class='card-subtitle'><strike>$" + (lcobjResponse.promo.data[lcintI].prevalor).formatMoney(0, ',', '.') + "</strike>&nbsp;<font color='red'>$" + (lcobjResponse.promo.data[lcintI].prevalorpromo).formatMoney(0, ',', '.') + "</font> (" + lcobjResponse.promo.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' title='Es precio es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion" + lcobjResponse.promo.data[lcintI].preid + "'>" + lcobjResponse.promo.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' style='cursor: pointer;' title='Es precio NO es correcto.' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 0);'></i></h5>";
 							else
-								lcstrHtml += "<h5 class='card-subtitle'>$" + (lcobjResponse.promo.data[lcintI].prevalor).formatMoney(0, ',', '.') + " (" + lcobjResponse.promo.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' style='cursor: pointer;' title='Es precio es correcto.' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.promo.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' title='Es precio NO es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 0);'></i></h5>";
+								lcstrHtml += "<h5 class='card-subtitle'>$" + (lcobjResponse.promo.data[lcintI].prevalor).formatMoney(0, ',', '.') + " (" + lcobjResponse.promo.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' style='cursor: pointer;' title='Es precio es correcto.' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion" + lcobjResponse.promo.data[lcintI].preid + "'>" + lcobjResponse.promo.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' title='Es precio NO es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 0);'></i></h5>";
 							lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.promo.data[lcintI].prefecha + "<br />" + lcobjResponse.promo.data[lcintI].sucnombre + "</h5>";	
 							lcstrHtml += "<div class='card-action'>";
 							lcstrHtml += "<div class='row between-xs'>";
@@ -1744,6 +1745,7 @@ function ValidatePrice(vlintPreID, vlintValoracion) {
 	var lcstrRequest = "";
 	
 	try {
+		pvpreID = "" + vlintPreID;
 		pvobjRequest = getXmlHttpRequestObject();
 		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
 			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=VALIDATEPRECIO&PREID=" + vlintPreID + "&VALORACION=" + vlintValoracion + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
@@ -1751,7 +1753,7 @@ function ValidatePrice(vlintPreID, vlintValoracion) {
 			pvobjRequest.open("GET", lcstrRequest, true);
 			pvobjRequest.onreadystatechange = ValidatePriceData;
 			pvobjRequest.send(null);
-			document.getElementById("lblValoracion").innerHTML = "<img src='css/themes/default/images/ajax-loader.gif' style='height: 20px' />";
+			document.getElementById("lblValoracion" + pvpreID).innerHTML = "<img src='css/themes/default/images/ajax-loader.gif' style='height: 20px' />";
 		}
 	}
 	catch (ee) {
@@ -1764,7 +1766,7 @@ function ValidatePriceData() {
 		if (pvobjRequest.readyState == 4) {
 			if (pvobjRequest.status == 200) {
 				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
-				document.getElementById("lblValoracion").innerHTML = "" + lcobjResponse.prevaloracion;
+				document.getElementById("lblValoracion" + pvpreID).innerHTML = "" + lcobjResponse.prevaloracion;
 				MsgBox(lcobjResponse.error);
 			}
 		}
