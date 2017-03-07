@@ -830,7 +830,7 @@ function GetUser() {
 			lcstrHtml += "</li>";
 			lcstrHtml += "<li class='ui-field-contain'>";
 			lcstrHtml += "<label for='txtAlias'>Seud&oacute;nimo:</label>";
-			lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='' maxlength='10' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
+			lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='' maxlength='15' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
 			lcstrHtml += "</li>";
 			lcstrHtml += "<li class='ui-field-contain'>";
 			lcstrHtml += "<label for='txtDistancia'>Distancia máxima a buscar (Km):</label>";
@@ -880,7 +880,7 @@ function GetUserData() {
 					lcstrHtml += "</li>";
 					lcstrHtml += "<li class='ui-field-contain'>";
 					lcstrHtml += "<label for='txtAlias'>Seud&oacute;nimo:</label>";
-					lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='" + lcobjResponse.alias + "' maxlength='10' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
+					lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='" + lcobjResponse.alias + "' maxlength='15' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
 					lcstrHtml += "</li>";
 					lcstrHtml += "<li class='ui-field-contain'>";
 					lcstrHtml += "<label for='txtDistancia'>Distancia máxima a buscar (Km):</label>";
@@ -1038,8 +1038,14 @@ function Register() {
 	try {
 		if ("" + document.getElementById("txtEmail").value == "" && lcstrError == "")
 			lcstrError = "El campo Email es requerido.";
+		if (!ValidateEmail("" + document.getElementById("txtEmail").value) && lcstrError == "")
+			lcstrError = "El campo Email es incorrecto.";
 		if ("" + document.getElementById("txtDeviceID").value == "" && lcstrError == "")
 			lcstrError = "El campo ID del dispositivo es requerido.";
+		if ("" + document.getElementById("txtAlias").value != "" && lcstrError == "") {
+			if (!ValidateInput("" + document.getElementById("txtAlias").value))
+				lcstrError = "El campo Seud&oacute;nimo solo puede contener letras, n&uacute;meros o _.";
+		}
 		if (lcstrError == "") {
 			pvobjRequest = getXmlHttpRequestObject();
 			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
@@ -1593,18 +1599,28 @@ function TutorialPage() {
 }
 			
 function UpdateUser() {
+	var lcstrError = "";
+	
 	try {
-		SetStorage("AH_DISTANCIAMAX", "" + document.getElementById("txtDistancia").value);
-		pvintDistanciaMax = parseInt("" + document.getElementById("txtDistancia").value);
-		pvobjRequest = getXmlHttpRequestObject();
-		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=UPDATEUSER&ALIAS=" + window.btoa("" + document.getElementById("txtAlias").value) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
-			console.log(">> " + lcstrRequest);
-			pvobjRequest.open("GET", lcstrRequest, true);
-			pvobjRequest.onreadystatechange = UpdateUserData;
-			pvobjRequest.send(null);
-			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+		if ("" + document.getElementById("txtAlias").value != "" && lcstrError == "") {
+			if (!ValidateInput("" + document.getElementById("txtAlias").value))
+				lcstrError = "El campo Seud&oacute;nimo solo puede contener letras, n&uacute;meros o _.";
 		}
+		if (lcstrError == "") {
+			SetStorage("AH_DISTANCIAMAX", "" + document.getElementById("txtDistancia").value);
+			pvintDistanciaMax = parseInt("" + document.getElementById("txtDistancia").value);
+			pvobjRequest = getXmlHttpRequestObject();
+			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=UPDATEUSER&ALIAS=" + window.btoa("" + document.getElementById("txtAlias").value) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				console.log(">> " + lcstrRequest);
+				pvobjRequest.open("GET", lcstrRequest, true);
+				pvobjRequest.onreadystatechange = UpdateUserData;
+				pvobjRequest.send(null);
+				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+			}
+		}
+		else
+			MsgBox(lcstrError);
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (UpdateUser)");
@@ -1635,7 +1651,7 @@ function UpdateUserData() {
 					lcstrHtml += "</li>";
 					lcstrHtml += "<li class='ui-field-contain'>";
 					lcstrHtml += "<label for='txtAlias'>Seud&oacute;nimo:</label>";
-					lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='" + lcobjResponse.alias + "' maxlength='10' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
+					lcstrHtml += "<input type='text' name='txtAlias' id='txtAlias' value='" + lcobjResponse.alias + "' maxlength='15' data-clear-btn='true' placeholder='Seud&oacute;nimo' />";
 					lcstrHtml += "</li>";
 					lcstrHtml += "<li class='ui-field-contain'>";
 					lcstrHtml += "<label for='txtDistancia'>Distancia máxima a buscar (Km):</label>";
@@ -1712,6 +1728,16 @@ function UploadPicture(vlobjImageUri) {
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (Search)");
 	}
+}
+			
+function ValidateEmail(vlstrEmail) {
+	var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	return re.test(vlstrEmail);
+}
+			
+function ValidateInput(vlstrInput) {
+	var re = /^[0-9a-zA-Z\_]+$/;
+	return re.test(vlstrInput);
 }
 
 function ValidatePrice(vlintPreID, vlintValoracion) {
