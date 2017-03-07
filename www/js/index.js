@@ -24,7 +24,7 @@ var pvintImageCount = 0;
 var pvintTutorialPage = 1;
 var pvintPage = 0;
 var pvintNivel = 0;
-var pvintDistanciaMax = 5;
+var pvintDistanciaMax = 2;
 var pvdblLatitud = 6.2126324;
 var pvdblLongitud = -75.5800677;
 var pvstrVersion = "1.0";
@@ -38,6 +38,7 @@ var pvproNombre = "";
 var pvproID = "";
 var pvproEAN = "";
 var pvproFoto = "";
+var pvproFotoAlias = "";
 var pvobjRequest = null;
 var admobid = {
 	interstitial: 'ca-app-pub-3819406531547363/4201960719'
@@ -67,7 +68,7 @@ var app = {
 		var lcstrVersion = GetStorage("AH_VERSION", "");
 		pvstrAccount = GetStorage("AH_EMAIL", "");
 		pvstrDeviceID = "" + device.uuid;
-		pvintDistanciaMax = parseInt(GetStorage("AH_DISTANCIAMAX", "1"));
+		pvintDistanciaMax = parseInt(GetStorage("AH_DISTANCIAMAX", "2"));
 		pvstrBack[0] = "" + document.getElementById("divContent").innerHTML;
 		if (AdMob) AdMob.prepareInterstitial( { adId:admobid.interstitial, autoShow:true } );
 		if (navigator.geolocation) {
@@ -161,7 +162,7 @@ function ContributePrice(vlproID) {
 		if (lcstrError == "") {
 			pvobjRequest = getXmlHttpRequestObject();
 			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=CONTRIBUTE2&ID=" + vlproID + "&Ubicacion=" + document.getElementById("txtUbicacion").value + "&NuevaUbicacion=" + window.btoa("" + document.getElementById("txtNuevaUbicacion").value) + "&Precio=" + document.getElementById("txtPrecio").value + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=CONTRIBUTE2&ID=" + vlproID + "&Ubicacion=" + document.getElementById("txtUbicacion").value + "&NuevaUbicacion=" + window.btoa("" + document.getElementById("txtNuevaUbicacion").value) + "&Precio=" + document.getElementById("txtPrecio").value + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&PID=" + Math.random();
 				console.log(">> " + lcstrRequest);
 				pvobjRequest.open("GET", lcstrRequest, true);
 				pvobjRequest.onreadystatechange = ContributePriceData;
@@ -224,7 +225,7 @@ function ContributeProduct() {
 		if (lcstrError == "") {
 			pvobjRequest = getXmlHttpRequestObject();
 			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=CONTRIBUTE&EAN=" + document.getElementById("txtEAN").value + "&Producto=" + window.btoa("" + document.getElementById("txtProducto").value) + "&Ubicacion=" + document.getElementById("txtUbicacion").value + "&NuevaUbicacion=" + window.btoa("" + document.getElementById("txtNuevaUbicacion").value) + "&Precio=" + document.getElementById("txtPrecio").value + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=CONTRIBUTE&EAN=" + document.getElementById("txtEAN").value + "&Producto=" + window.btoa("" + document.getElementById("txtProducto").value) + "&Ubicacion=" + document.getElementById("txtUbicacion").value + "&NuevaUbicacion=" + window.btoa("" + document.getElementById("txtNuevaUbicacion").value) + "&Precio=" + document.getElementById("txtPrecio").value + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&PID=" + Math.random();
 				console.log(">> " + lcstrRequest);
 				pvobjRequest.open("GET", lcstrRequest, true);
 				pvobjRequest.onreadystatechange = ContributeProductData;
@@ -292,14 +293,14 @@ function GetBarCodeData() {
 						lcstrHtml += "<div class='nd2-card card-media-right card-media-small'>";
 						lcstrHtml += "<div class='card-media'>";
 						if ("" + lcobjResponse.data[lcintI].profoto != "")
-							lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', " + lcobjResponse.data[lcintI].profotocount + ");\" />";
+							lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\" />";
 						else
-							lcstrHtml += "<img src='img/noimage.jpg' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', " + lcobjResponse.data[lcintI].profotocount + ");\" />";
+							lcstrHtml += "<img src='img/noimage.jpg' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\" />";
 						lcstrHtml += "</div>";
 						lcstrHtml += "<div class='card-title has-supporting-text'>";
 						lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.data[lcintI].pronombre + "</b></h5>";
 						lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].proean + "</h5><br />";
-						lcstrHtml += "<a href='#' class='ui-btn ui-btn-raised ui-btn-inline waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', " + lcobjResponse.data[lcintI].profotocount + ");\">CONSULTAR PRECIOS</a>";
+						lcstrHtml += "<a href='#' class='ui-btn ui-btn-raised ui-btn-inline waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\">CONSULTAR PRECIOS</a>";
 						lcstrHtml += "</div>";
 						lcstrHtml += "</div>";
 					}
@@ -422,7 +423,7 @@ function GetNextImage() {
 				document.getElementById("imgFoto").src = "img/loading.gif";
 			pvobjRequest = getXmlHttpRequestObject();
 			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETNEXTIMAGE&PROID=" + pvproID + "&INDEX=" + pvintImageIndex + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETNEXTIMAGE&PROID=" + pvproID + "&PROEAN=" + pvproEAN + "&INDEX=" + pvintImageIndex + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 				console.log(">> " + lcstrRequest);
 				pvobjRequest.open("GET", lcstrRequest, true);
 				pvobjRequest.onreadystatechange = GetNextImageData;
@@ -446,6 +447,8 @@ function GetNextImageData() {
 					pvintImageIndex++;
 					if (document.getElementById("imgFoto"))
 						document.getElementById("imgFoto").src = lcobjResponse.profoto;
+					if (document.getElementById("lblAliasUsuario"))
+						document.getElementById("lblAliasUsuario").innerHTML = lcobjResponse.profotoalias;
 					if (document.getElementById("iPrev"))
 						document.getElementById("iPrev").style.visibility = "visible";
 					if (document.getElementById("iNext")) {
@@ -485,7 +488,7 @@ function GetPreviousImage() {
 				document.getElementById("imgFoto").src = "img/loading.gif";
 			pvobjRequest = getXmlHttpRequestObject();
 			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPREVIOUSIMAGE&PROID=" + pvproID + "&INDEX=" + pvintImageIndex + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPREVIOUSIMAGE&PROID=" + pvproID + "&PROEAN=" + pvproEAN + "&INDEX=" + pvintImageIndex + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 				console.log(">> " + lcstrRequest);
 				pvobjRequest.open("GET", lcstrRequest, true);
 				pvobjRequest.onreadystatechange = GetPreviousImageData;
@@ -509,6 +512,8 @@ function GetPreviousImageData() {
 					pvintImageIndex--;
 					if (document.getElementById("imgFoto"))
 						document.getElementById("imgFoto").src = lcobjResponse.profoto;
+					if (document.getElementById("lblAliasUsuario"))
+						document.getElementById("lblAliasUsuario").innerHTML = lcobjResponse.profotoalias;
 					if (document.getElementById("iNext"))
 						document.getElementById("iNext").style.visibility = "visible";
 					if (document.getElementById("iPrev")) {
@@ -528,16 +533,20 @@ function GetPreviousImageData() {
 	}
 }
 
-function GetPrices(vlintProductID, vlstrProductName, vlstrProductPhoto, vlstrProductEAN, vlintPhotoCount) {
+function GetPrices(vlintProductID, vlstrProductName, vlstrProductPhoto, vlstrProductEAN, vlstrPhotoAlias, vlintPhotoCount) {
 	var lcstrRequest = "";
+	var lcstrUserPhoto = "";
 	
 	try {		
 		pvintImageIndex = 1;
 		pvproID = vlintProductID;
 		pvproNombre = vlstrProductName;
 		pvproEAN = vlstrProductEAN;
+		pvproFotoAlias = vlstrPhotoAlias;
 		pvintImageCount = vlintPhotoCount;
 		if (vlstrProductPhoto != "") {
+			if (pvproFotoAlias != "")
+				lcstrUserPhoto = "<br />Usuario: <span id='lblAliasUsuario'>" + pvproFotoAlias + "</span>";
 			lcintPos = vlstrProductPhoto.indexOf("://");
 			if (lcintPos >= 0) {
 				lcstrCredito = vlstrProductPhoto.substr(lcintPos + 3);
@@ -545,7 +554,7 @@ function GetPrices(vlintProductID, vlstrProductName, vlstrProductPhoto, vlstrPro
 				if (lcintPos >= 0)
 					lcstrCredito = lcstrCredito.substr(0, lcintPos);
 				lcstrCredito = lcstrCredito.replace("www.", "").replace("WWW.", "");
-				pvproFoto = "<p align='center'><img id='imgFoto' src='" + vlstrProductPhoto + "' style='height: 200px' onclick='TakePicture();' /><br />" + vlstrProductEAN + "<br />Foto: " + lcstrCredito + "</p>";
+				pvproFoto = "<p align='center'><img id='imgFoto' src='" + vlstrProductPhoto + "' style='height: 200px' onclick='TakePicture();' /><br />" + vlstrProductEAN + "<br />Foto: " + lcstrCredito + lcstrUserPhoto + "</p>";
 			}
 			else
 				pvproFoto = "<p align='center'><img id='imgFoto' src='" + vlstrProductPhoto + "' style='height: 200px' onclick='TakePicture();' /><br />" + vlstrProductEAN + "</p>";
@@ -915,7 +924,7 @@ function GetUserLocation(position) {
 		if (pvbooStartup && pvstrAccount != "" && pvstrDeviceID != "") {
 			pvobjRequest = getXmlHttpRequestObject();
 			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=STARTUP&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=STARTUP&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 				console.log(">> " + lcstrRequest);
 				pvobjRequest.open("GET", lcstrRequest, true);
 				pvobjRequest.onreadystatechange = StartupData;
@@ -1200,14 +1209,14 @@ function SearchData() {
 						lcstrHtml += "<div class='nd2-card card-media-right card-media-small'>";
 						lcstrHtml += "<div class='card-media'>";
 						if ("" + lcobjResponse.data[lcintI].profoto != "")
-							lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' style='cursor: pointer' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', " + lcobjResponse.data[lcintI].profotocount + ");\" />";
+							lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' style='cursor: pointer' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\" />";
 						else
-							lcstrHtml += "<img src='img/noimage.jpg' style='cursor: pointer' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', " + lcobjResponse.data[lcintI].profotocount + ");\" />";
+							lcstrHtml += "<img src='img/noimage.jpg' style='cursor: pointer' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\" />";
 						lcstrHtml += "</div>";
 						lcstrHtml += "<div class='card-title has-supporting-text'>";
 						lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.data[lcintI].pronombre + "</b></h5>";
 						lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].proean + "</h5><br />";
-						lcstrHtml += "<a href='#' class='ui-btn ui-btn-raised ui-btn-inline waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', " + lcobjResponse.data[lcintI].profotocount + ");\">CONSULTAR PRECIOS</a>";
+						lcstrHtml += "<a href='#' class='ui-btn ui-btn-raised ui-btn-inline waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\">CONSULTAR PRECIOS</a>";
 						lcstrHtml += "</div>";
 						lcstrHtml += "</div>";
 					}
@@ -1301,7 +1310,7 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i8").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Haga click en <i class='fa fa-cog'></i> y configure la distancia m&aacute;xima de b&uacute;squeda de productos desde su ubicaci&oacute;n.</h3>";
+				lcstrHtml += "<h3>Haga click en <i class='fa fa-cog'></i> y reg&iacute;strese en el sistema usando su correo electr&oacute;nico. Le enviaremos un mensaje de confirmaci&oacute;n en el que deber&aacute; hacer click en <b>Terminar Proceso</b> para completar el registro.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 			case 3:
@@ -1329,7 +1338,7 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i8").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Se desplegar&aacute;n los precios del producto en los establecimientos cercanos a usted, seg&uacute;n la configuraci&oacute;n realizada en <i class='fa fa-cog'></i>.</h3>";
+				lcstrHtml += "<h3>Se desplegar&aacute;n los precios del producto en los establecimientos cercanos a usted, seg&uacute;n la distancia m&aacute;xima configurada en <i class='fa fa-cog'></i>.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 			case 5:
@@ -1435,40 +1444,40 @@ function StartupData() {
 			if (pvobjRequest.status == 200) {
 				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
 				if (lcobjResponse.errcode == 0) {
-					if (lcobjResponse.data.length > 0) {
+					if (lcobjResponse.promo.data.length > 0) {
 						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
 						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-						lcstrHtml += "<h3>" + lcobjResponse.title + "</h3>";
+						lcstrHtml += "<h3>" + lcobjResponse.promo.title + "</h3>";
 						lcstrHtml += "</div>";
 						lcstrHtml += "<div class='ui-body ui-body-a'>";
-						for (lcintI = 0; lcintI < lcobjResponse.data.length; lcintI++) {
+						for (lcintI = 0; lcintI < lcobjResponse.promo.data.length; lcintI++) {
 							lcstrHtml += "<div class='nd2-card card-media-right card-media-small'>";
 							lcstrHtml += "<div class='card-media'>";
-							if ("" + lcobjResponse.data[lcintI].profoto != "")
-								lcstrHtml += "<img src='" + lcobjResponse.data[lcintI].profoto + "' />";
+							if ("" + lcobjResponse.promo.data[lcintI].profoto != "")
+								lcstrHtml += "<img src='" + lcobjResponse.promo.data[lcintI].profoto + "' />";
 							else
 								lcstrHtml += "<img src='images/noimage.jpg' />";
 							lcstrHtml += "</div>";
 							lcstrHtml += "<div class='card-title has-supporting-text'>";
-							lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.data[lcintI].pronombre + "</b></h5>";
-							lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].proean + "</h5><br />";
-							if ("" + lcobjResponse.data[lcintI].prevalorpromo != "0")
-								lcstrHtml += "<h5 class='card-subtitle'><strike>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + "</strike>&nbsp;<font color='red'>$" + (lcobjResponse.data[lcintI].prevalorpromo).formatMoney(0, ',', '.') + "</font> (" + lcobjResponse.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' title='Es precio es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' style='cursor: pointer;' title='Es precio NO es correcto.' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 0);'></i></h5>";
+							lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.promo.data[lcintI].pronombre + "</b></h5>";
+							lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.promo.data[lcintI].proean + "</h5><br />";
+							if ("" + lcobjResponse.promo.data[lcintI].prevalorpromo != "0")
+								lcstrHtml += "<h5 class='card-subtitle'><strike>$" + (lcobjResponse.promo.data[lcintI].prevalor).formatMoney(0, ',', '.') + "</strike>&nbsp;<font color='red'>$" + (lcobjResponse.promo.data[lcintI].prevalorpromo).formatMoney(0, ',', '.') + "</font> (" + lcobjResponse.promo.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' title='Es precio es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.promo.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' style='cursor: pointer;' title='Es precio NO es correcto.' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 0);'></i></h5>";
 							else
-								lcstrHtml += "<h5 class='card-subtitle'>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + " (" + lcobjResponse.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' style='cursor: pointer;' title='Es precio es correcto.' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' title='Es precio NO es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.data[lcintI].preid + ", 0);'></i></h5>";
-							lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].prefecha + "<br />" + lcobjResponse.data[lcintI].sucnombre + "</h5>";	
+								lcstrHtml += "<h5 class='card-subtitle'>$" + (lcobjResponse.promo.data[lcintI].prevalor).formatMoney(0, ',', '.') + " (" + lcobjResponse.promo.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' style='cursor: pointer;' title='Es precio es correcto.' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion'>" + lcobjResponse.promo.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' title='Es precio NO es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 0);'></i></h5>";
+							lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.promo.data[lcintI].prefecha + "<br />" + lcobjResponse.promo.data[lcintI].sucnombre + "</h5>";	
 							lcstrHtml += "<div class='card-action'>";
 							lcstrHtml += "<div class='row between-xs'>";
 							lcstrHtml += "<div class='col-xs-4'>";
 							lcstrHtml += "<div class='box'>";
-							if (lcobjResponse.data[lcintI].sucdistancia > 0.0)
-								lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button' onclick='GetPricexLocation(" + lcobjResponse.data[lcintI].preid + ");'><i class='fa fa-map-marker' style='cursor: pointer;'></i></a>";
+							if (lcobjResponse.promo.data[lcintI].sucdistancia > 0.0)
+								lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button' onclick='GetPricexLocation(" + lcobjResponse.promo.data[lcintI].preid + ");'><i class='fa fa-map-marker' style='cursor: pointer;'></i></a>";
 							lcstrHtml += "</div>";
 							lcstrHtml += "</div>";
 							lcstrHtml += "<div class='col-xs-8 align-right'>";
 							lcstrHtml += "<div class='box'>";
-							if (lcobjResponse.data[lcintI].sucdistancia >= 0.0)
-								lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline'>" + (lcobjResponse.data[lcintI].sucdistancia).formatMoney(0, ',', '.') + " metros</a>";
+							if (lcobjResponse.promo.data[lcintI].sucdistancia >= 0.0)
+								lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline'>" + (lcobjResponse.promo.data[lcintI].sucdistancia).formatMoney(0, ',', '.') + " metros</a>";
 							else
 								lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline'>WEB</a>";
 							lcstrHtml += "</div>";
@@ -1480,9 +1489,26 @@ function StartupData() {
 						}
 						lcstrHtml += "</div>";
 						lcstrHtml += "</div>";
-						pvstrBack[pvintNivel] = lcstrHtml;
-						document.getElementById("divContent").innerHTML = lcstrHtml;
 					}
+					if (lcobjResponse.best50.data.length > 0) {
+						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+						lcstrHtml += "<h3>" + lcobjResponse.best50.title + "</h3>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "<div class='ui-body ui-body-a'>";
+						lcstrHtml += "<ol id='ulBest50' data-role='listview' data-inset='true'>";
+						for (lcintI = 0; lcintI < lcobjResponse.best50.data.length; lcintI++) {
+							lcstrHtml += "<li class='ui-li-has-count ui-first-child'>";
+							lcstrHtml += "" + lcobjResponse.best50.data[lcintI].alias + "<span class='ui-li-count ui-body-b'>" + lcobjResponse.best50.data[lcintI].count + "</span>";
+							lcstrHtml += "</li>";
+						}
+						lcstrHtml += "</ol>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "</div>";
+					}
+					document.getElementById("divContent").innerHTML = lcstrHtml + document.getElementById("divContent").innerHTML;
+					if (document.getElementById("ulBest50"))
+						$('#ulBest50').listview().listview('refresh');
 				}
 			}
 		}
@@ -1515,6 +1541,11 @@ function TutorialPage() {
 	var lcstrHtml = "";
 	
 	try {
+		lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+		lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+		lcstrHtml += "<h3>Tutorial</h3>";
+		lcstrHtml += "</div>";
+		lcstrHtml += "<div class='ui-body ui-body-a'>";
 		lcstrHtml += "<table style=\"width: 100%; height: 80%; font-family: 'Roboto', sans-serif;\">";
 		lcstrHtml += "<tr style='height: 100%'>";
 		lcstrHtml += "<td id='tdTutPrev' align='center' style='width: 10%'><i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i></td>";
@@ -1536,6 +1567,8 @@ function TutorialPage() {
 		lcstrHtml += "</td>";
 		lcstrHtml += "</tr>";
 		lcstrHtml += "</table>";
+		lcstrHtml += "</div>";
+		lcstrHtml += "</div>";
 		lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab ui-btn-fab-bottom ui-btn-raised clr-primary' data-role='toast' data-toast-message='Preferencias del sistema'>";
 		lcstrHtml += "<i class='fa fa-cog' onclick='GetUser();'></i>";
 		lcstrHtml += "</a>";
