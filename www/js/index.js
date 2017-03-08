@@ -19,6 +19,7 @@
 
 var pvbooStartup = true;
 var pvintPage = 0;
+var pvintPromoPage = 0;
 var pvintImageIndex = 1;
 var pvintImageCount = 0;
 var pvintTutorialPage = 1;
@@ -31,7 +32,6 @@ var pvstrVersion = "1.0";
 var pvstrAccount = "";
 var pvstrDeviceID = "";
 var pvstrFunction = "";
-var pvstrCommand = "";
 var pvstrSearchData = "";
 var pvstrBack = ["", "", ""];
 var pvpreID = "";
@@ -938,7 +938,8 @@ function GetUserLocation(position) {
 		if (pvbooStartup && pvstrAccount != "" && pvstrDeviceID != "") {
 			pvobjRequest = getXmlHttpRequestObject();
 			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=STARTUP&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				pvintPromoPage = 0;
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=STARTUP&PAGE=" + pvintPromoPage + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 				console.log(">> " + lcstrRequest);
 				pvobjRequest.open("GET", lcstrRequest, true);
 				pvobjRequest.onreadystatechange = StartupData;
@@ -987,23 +988,37 @@ function NextPage() {
 	var lcstrRequest = "";
 	
 	try {
-		switch (pvstrCommand) {
-			case "GETPRODUCTOS":
-				pvintPage++;
-				pvobjRequest = getXmlHttpRequestObject();
-				if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-					lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
-					console.log(">> " + lcstrRequest);
-					pvobjRequest.open("GET", lcstrRequest, true);
-					pvobjRequest.onreadystatechange = SearchData;
-					pvobjRequest.send(null);
-					document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
-				}
-				break;
+		pvintPage++;
+		pvobjRequest = getXmlHttpRequestObject();
+		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+			console.log(">> " + lcstrRequest);
+			pvobjRequest.open("GET", lcstrRequest, true);
+			pvobjRequest.onreadystatechange = SearchData;
+			pvobjRequest.send(null);
+			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
 		}
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (NextPage)");
+	}
+}
+			
+function NextPromoPage() {
+	try {
+		pvintPromoPage++;
+		pvobjRequest = getXmlHttpRequestObject();
+		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=STARTUP&PAGE=" + pvintPromoPage + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+			console.log(">> " + lcstrRequest);
+			pvobjRequest.open("GET", lcstrRequest, true);
+			pvobjRequest.onreadystatechange = StartupData;
+			pvobjRequest.send(null);
+			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (NextPromoPage)");
 	}
 }
 
@@ -1011,25 +1026,41 @@ function PreviousPage() {
 	var lcstrRequest = "";
 	
 	try {
-		switch (pvstrCommand) {
-			case "GETPRODUCTOS":
-				if (pvintPage > 0) {
-					pvintPage--;
-					pvobjRequest = getXmlHttpRequestObject();
-					if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-						lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
-						console.log(">> " + lcstrRequest);
-						pvobjRequest.open("GET", lcstrRequest, true);
-						pvobjRequest.onreadystatechange = SearchData;
-						pvobjRequest.send(null);
-						document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
-					}
-				}
-				break;
+		if (pvintPage > 0) {
+			pvintPage--;
+			pvobjRequest = getXmlHttpRequestObject();
+			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				console.log(">> " + lcstrRequest);
+				pvobjRequest.open("GET", lcstrRequest, true);
+				pvobjRequest.onreadystatechange = SearchData;
+				pvobjRequest.send(null);
+				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+			}
 		}
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (PreviousPage)");
+	}
+}
+			
+function PreviousPromoPage() {
+	try {
+		if (pvintPromoPage > 0) {
+			pvintPromoPage--;
+			pvobjRequest = getXmlHttpRequestObject();
+			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=STARTUP&PAGE=" + pvintPromoPage + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				console.log(">> " + lcstrRequest);
+				pvobjRequest.open("GET", lcstrRequest, true);
+				pvobjRequest.onreadystatechange = StartupData;
+				pvobjRequest.send(null);
+				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+			}
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (PreviousPromoPage)");
 	}
 }
 			
@@ -1177,7 +1208,6 @@ function Search() {
 			if (pvstrAccount != "" && pvstrDeviceID != "") {
 				if (("" + document.getElementById("txtBuscar").value).length >= 3) {
 					pvintPage = 0;
-					pvstrCommand = "GETPRODUCTOS";
 					pvstrSearchData = "" + document.getElementById("txtBuscar").value;
 					pvobjRequest = getXmlHttpRequestObject();
 					if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
@@ -1457,6 +1487,9 @@ function ShowTerms() {
 
 function StartupData() {
 	var lcintI = 0;
+	var lcintPage = 0;
+	var lcintRows = 0;
+	var lcintTotRows = 0;
 	var lcstrHtml = "";
 	
 	try {
@@ -1464,12 +1497,33 @@ function StartupData() {
 			if (pvobjRequest.status == 200) {
 				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
 				if (lcobjResponse.errcode == 0) {
-					if (lcobjResponse.promo.data.length > 0) {
+					if (lcobjResponse.best50.data.length > 0) {
 						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
 						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-						lcstrHtml += "<h3>" + lcobjResponse.promo.title + "</h3>";
+						lcstrHtml += "<h3>" + lcobjResponse.best50.title + "</h3>";
 						lcstrHtml += "</div>";
 						lcstrHtml += "<div class='ui-body ui-body-a'>";
+						lcstrHtml += "<ol id='ulBest50' data-role='listview' data-inset='true'>";
+						for (lcintI = 0; lcintI < lcobjResponse.best50.data.length; lcintI++) {
+							lcstrHtml += "<li class='ui-li-has-count ui-first-child'>";
+							lcstrHtml += "" + lcobjResponse.best50.data[lcintI].alias + "<span class='ui-li-count ui-body-b'>" + lcobjResponse.best50.data[lcintI].count + "</span>";
+							lcstrHtml += "</li>";
+						}
+						lcstrHtml += "</ol>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "</div>";
+					}
+					if (lcobjResponse.promo.data.length > 0) {
+						lcintPage = lcobjResponse.promo.page;
+						lcintRows = lcobjResponse.promo.rows;
+						lcintTotRows = lcobjResponse.promo.totrows;
+						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+						lcstrHtml += "<h3>" + lcobjResponse.promo.title + " - " + lcintTotRows + " resultados - Página " + (lcintPage + 1) + " de " + (parseInt(lcintTotRows / 20) + 1) + "</h3>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "<div class='ui-body ui-body-a'>";
+						if (lcintPage > 0)
+							lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='PreviousPromoPage();'>Anteriores resultados</button>";
 						for (lcintI = 0; lcintI < lcobjResponse.promo.data.length; lcintI++) {
 							lcstrHtml += "<div class='nd2-card card-media-right card-media-small'>";
 							lcstrHtml += "<div class='card-media'>";
@@ -1480,11 +1534,8 @@ function StartupData() {
 							lcstrHtml += "</div>";
 							lcstrHtml += "<div class='card-title has-supporting-text'>";
 							lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.promo.data[lcintI].pronombre + "</b></h5>";
-							lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.promo.data[lcintI].proean + "</h5><br />";
-							if ("" + lcobjResponse.promo.data[lcintI].prevalorpromo != "0")
-								lcstrHtml += "<h5 class='card-subtitle'><strike>$" + (lcobjResponse.promo.data[lcintI].prevalor).formatMoney(0, ',', '.') + "</strike>&nbsp;<font color='red'>$" + (lcobjResponse.promo.data[lcintI].prevalorpromo).formatMoney(0, ',', '.') + "</font> (" + lcobjResponse.promo.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' title='Es precio es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion" + lcobjResponse.promo.data[lcintI].preid + "'>" + lcobjResponse.promo.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' style='cursor: pointer;' title='Es precio NO es correcto.' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 0);'></i></h5>";
-							else
-								lcstrHtml += "<h5 class='card-subtitle'>$" + (lcobjResponse.promo.data[lcintI].prevalor).formatMoney(0, ',', '.') + " (" + lcobjResponse.promo.data[lcintI].usualias + ")&nbsp;&nbsp;<i class='fa fa-check' style='cursor: pointer;' title='Es precio es correcto.' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 1);'></i>&nbsp;&nbsp;(<span id='lblValoracion" + lcobjResponse.promo.data[lcintI].preid + "'>" + lcobjResponse.promo.data[lcintI].prevaloracion + "</span>)&nbsp;&nbsp;<i class='fa fa-times' title='Es precio NO es correcto.' style='cursor: pointer;' onclick='ValidatePrice(" + lcobjResponse.promo.data[lcintI].preid + ", 0);'></i></h5>";
+							lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.promo.data[lcintI].proean + "</h5>";
+							lcstrHtml += "<h5 class='card-subtitle'><strike>$" + (lcobjResponse.promo.data[lcintI].prevalor).formatMoney(0, ',', '.') + "</strike>&nbsp;<font color='red'>$" + (lcobjResponse.promo.data[lcintI].prevalorpromo).formatMoney(0, ',', '.') + "</font> (" + lcobjResponse.promo.data[lcintI].usualias + ")</h5>";
 							lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.promo.data[lcintI].prefecha + "<br />" + lcobjResponse.promo.data[lcintI].sucnombre + "</h5>";	
 							lcstrHtml += "<div class='card-action'>";
 							lcstrHtml += "<div class='row between-xs'>";
@@ -1507,28 +1558,15 @@ function StartupData() {
 							lcstrHtml += "</div>";
 							lcstrHtml += "</div>";
 						}
+						if (lcintRows == 20)
+							lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='NextPromoPage();'>Siguientes resultados</button>";
 						lcstrHtml += "</div>";
 						lcstrHtml += "</div>";
 					}
-					if (lcobjResponse.best50.data.length > 0) {
-						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-						lcstrHtml += "<h3>" + lcobjResponse.best50.title + "</h3>";
-						lcstrHtml += "</div>";
-						lcstrHtml += "<div class='ui-body ui-body-a'>";
-						lcstrHtml += "<ol id='ulBest50' data-role='listview' data-inset='true'>";
-						for (lcintI = 0; lcintI < lcobjResponse.best50.data.length; lcintI++) {
-							lcstrHtml += "<li class='ui-li-has-count ui-first-child'>";
-							lcstrHtml += "" + lcobjResponse.best50.data[lcintI].alias + "<span class='ui-li-count ui-body-b'>" + lcobjResponse.best50.data[lcintI].count + "</span>";
-							lcstrHtml += "</li>";
-						}
-						lcstrHtml += "</ol>";
-						lcstrHtml += "</div>";
-						lcstrHtml += "</div>";
-					}
-					document.getElementById("divContent").innerHTML = lcstrHtml + document.getElementById("divContent").innerHTML;
+					document.getElementById("divContent").innerHTML = lcstrHtml;
 					if (document.getElementById("ulBest50"))
 						$('#ulBest50').listview().listview('refresh');
+					$('[type="button"]').button().button('refresh');
 				}
 			}
 		}
