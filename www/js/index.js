@@ -151,7 +151,7 @@ function Back() {
 			navigator.notification.confirm(
 				"Salir de la aplicación",
 				function (button) {
-					if (button == 1)
+					if (button == 1 && "" + device.platform == "Android")
 						navigator.app.exitApp();
 				},
 				'Salir',
@@ -1105,6 +1105,8 @@ function RegisterData() {
 			if (pvobjRequest.status == 200) {
 				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
 				if (lcobjResponse.errcode == 0) {
+					SetStorage("AH_EMAIL", "" + lcobjResponse.email);
+					pvstrAccount = GetStorage("AH_EMAIL", "");
 					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
 					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
 					lcstrHtml += "<h3>Registro</h3>";
@@ -1126,8 +1128,6 @@ function RegisterData() {
 					if (lcobjResponse.errcode == 99) {
 						SetStorage("AH_EMAIL", "" + lcobjResponse.email);
 						pvstrAccount = GetStorage("AH_EMAIL", "");
-						SetStorage("AH_DEVICEID", "" + lcobjResponse.deviceid);
-						pvstrDeviceID = GetStorage("AH_DEVICEID", "");				
 					}
 					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
 					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
@@ -1444,7 +1444,7 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i8").className = "fa fa-circle";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Haga click en <i class='fa fa-map-marker'></i> para conocer la ubicaci&oacute;n del establecimiento con el precio deseado.</h3>";
+				lcstrHtml += "<h3>Haga click sobre la imagen del producto para tomar una nueva foto o en <i class='fa fa-map-marker'></i> para conocer la ubicaci&oacute;n del establecimiento con el precio deseado.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 		}
