@@ -148,15 +148,17 @@ function Back() {
 			}
 		}
 		else {
-			navigator.notification.confirm(
-				"Salir de la aplicación",
-				function (button) {
-					if (button == 1 && "" + device.platform == "Android")
-						navigator.app.exitApp();
-				},
-				'Salir',
-				'Ok, Cancelar'
-			);
+			if ("" + device.platform == "Android") {
+				navigator.notification.confirm(
+					"Salir de la aplicación",
+					function (button) {
+						if (button == 1)
+							navigator.app.exitApp();
+					},
+					'Salir',
+					'Ok, Cancelar'
+				);
+			}
 		}
 	}
 	catch (ee) {
