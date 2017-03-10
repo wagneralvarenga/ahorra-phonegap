@@ -902,24 +902,22 @@ function GetUserData() {
 					$('[type="number"]').slider().slider('refresh');
 				}
 				else {
-					if (lcobjResponse.errcode == 7) {
-						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-						lcstrHtml += "<h3>Registro</h3>";
-						lcstrHtml += "</div>";
-						lcstrHtml += "<div class='ui-body ui-body-a'>";
-						lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-						lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
-						lcstrHtml += "<li class='ui-field-contain'>";
-						lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
-						lcstrHtml += "</li>";
-						lcstrHtml += "</ul>";
-						lcstrHtml += "</div>";
-						lcstrHtml += "</div>";
-						document.getElementById("divContent").innerHTML = lcstrHtml;
-						$('#ulHome').listview().listview('refresh');
-						$('[type="button"]').button().button('refresh');
-					}
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>Registro</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
+					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
+					lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
+					lcstrHtml += "<li class='ui-field-contain'>";
+					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
+					lcstrHtml += "</li>";
+					lcstrHtml += "</ul>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "</div>";
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+					$('#ulHome').listview().listview('refresh');
+					$('[type="button"]').button().button('refresh');
 				}
 			}
 		}
