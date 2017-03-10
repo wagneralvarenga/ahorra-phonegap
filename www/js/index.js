@@ -668,6 +668,7 @@ function GetPricesData() {
 							lcstrHtml += "</div>";
 							lcstrHtml += "</div>";
 						}
+						lcstrPrevSuc = "" + lcobjResponse.data[lcintI].sucid;
 					}
 					lcstrHtml += GetContributeText(lcobjResponse);
 					pvstrBack[pvintNivel] = lcstrHtml;
