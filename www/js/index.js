@@ -154,11 +154,15 @@ function Back() {
 					function (button) {
 						if (button == 1)
 							navigator.app.exitApp();
+						else
+							TutorialPage();
 					},
 					'Salir',
 					'Ok, Cancelar'
 				);
 			}
+			else
+				TutorialPage();
 		}
 	}
 	catch (ee) {
