@@ -684,7 +684,7 @@ function GetListInfoData(vlstrResponse) {
 					lcstrHtml += "<ul id='ulLista' data-role='listview' data-inset='true'>";
 					lcstrHtml += "<li class='ui-field-contain'>";
 					lcstrHtml += "<label for='txtSucursales'>Seleccione sucursal para consultar precios:</label>";
-					lcstrHtml += "<select name='txtSucursales' id='txtSucursales' onchange='GetListInfo(" + lcobjResponse.lisid + ");'>";
+					lcstrHtml += "<select name='txtSucursales' id='txtSucursales'>";
 					lcstrHtml += "<option value=''>-- SELECCIONE SUCURSAL --</option>";
 					for (lcintI = 0; lcintI < lcobjResponse.sucursales.length; lcintI++) {
 						if ("" + lcobjResponse.sucid != "" && "" + lcobjResponse.sucid == "" + lcobjResponse.sucursales[lcintI].sucid)
@@ -780,7 +780,20 @@ function GetListInfoData(vlstrResponse) {
 				pvstrBack[pvintNivel] = lcstrHtml;
 				document.getElementById("divContent").innerHTML = lcstrHtml;
 				$('#ulLista').listview().listview('refresh');
-				$('#txtSucursales').selectmenu().selectmenu("refresh"); 
+				if (document.getElementById("txtSucursales")) {
+					$('#txtSucursales').selectmenu().selectmenu("refresh"); 
+					$(document).on('change', '#txtSucursales', function() { 
+						pvobjRequest = getXmlHttpRequestObject();
+						if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+							lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETLISTINFO&LISID=" + lcobjResponse.lisid + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+							console.log(">> " + lcstrRequest);
+							pvobjRequest.open("GET", lcstrRequest, true);
+							pvobjRequest.onreadystatechange = GetListInfoData;
+							pvobjRequest.send(null);
+							document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+						}
+					});
+				}
 				$('[type="button"]').button().button('refresh');
 			}
 		}
