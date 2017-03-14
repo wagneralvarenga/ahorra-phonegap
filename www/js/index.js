@@ -667,6 +667,7 @@ function GetListInfo(vllisID) {
 }
 
 function GetListInfoData(vlstrResponse) {
+	var lcintTotal = 0;
 	var lcstrHtml = "";
 	
 	try {
