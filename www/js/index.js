@@ -1779,14 +1779,14 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 	try {
 		if (vlintPage == 0) {
 			if (vlintDirection == 1) {
-				if (pvintTutorialPage == 8)
+				if (pvintTutorialPage == 10)
 					pvintTutorialPage = 1;
 				else
 					pvintTutorialPage++;
 			}
 			else {
 				if (pvintTutorialPage == 1)
-					pvintTutorialPage = 8;
+					pvintTutorialPage = 10;
 				else
 					pvintTutorialPage--;
 			}
@@ -1803,6 +1803,8 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i6").className = "fa fa-circle-o";
 				document.getElementById("i7").className = "fa fa-circle-o";
 				document.getElementById("i8").className = "fa fa-circle-o";
+				document.getElementById("i9").className = "fa fa-circle-o";
+				document.getElementById("i10").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
 				lcstrHtml += "<h3>Ahorra es una aplicaci&oacute;n que te permite encontrar y comparar los precios de muchos productos en diferentes establecimientos y as&iacute; tomar una decisi&oacute;n de compra inteligente.</h3>";
@@ -1817,9 +1819,11 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i6").className = "fa fa-circle-o";
 				document.getElementById("i7").className = "fa fa-circle-o";
 				document.getElementById("i8").className = "fa fa-circle-o";
+				document.getElementById("i9").className = "fa fa-circle-o";
+				document.getElementById("i10").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Haga click en <i class='fa fa-cog'></i> y reg&iacute;strese en el sistema usando su correo electr&oacute;nico. Le enviaremos un mensaje de confirmaci&oacute;n en el que deber&aacute; hacer click en <b>Terminar Proceso</b> para completar el registro.</h3>";
+				lcstrHtml += "<h3>Lo primero que debe hacer es registrarse. Haga click en <i class='fa fa-cog'></i> <b>OPCIONES</b> y reg&iacute;strese en el sistema usando su correo electr&oacute;nico. Le enviaremos un mensaje de confirmaci&oacute;n en el que deber&aacute; hacer click en el enlace <b>Terminar Proceso</b> para completar el registro.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 			case 3:
@@ -1831,9 +1835,11 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i6").className = "fa fa-circle-o";
 				document.getElementById("i7").className = "fa fa-circle-o";
 				document.getElementById("i8").className = "fa fa-circle-o";
+				document.getElementById("i9").className = "fa fa-circle-o";
+				document.getElementById("i10").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Escane&eacute; el c&oacute;digo de barras del producto haciendo click en <i class='fa fa-barcode'></i> o busque por nombre del producto y consulte los precios que ha ingresado nuestra comunidad de usuarios.</h3>";
+				lcstrHtml += "<h3>Una vez haya confirmado su registro, podr&aacute; escane&eacute; el c&oacute;digo de barras del producto haciendo click en <i class='fa fa-barcode'></i> o introducir la informaci&oacute;n del producto en el campo <b>Producto a buscar ...</b> y visualizar la lista de productos que cumplen con el criterio y cercan&iacute;a.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 			case 4:
@@ -1845,9 +1851,11 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i6").className = "fa fa-circle-o";
 				document.getElementById("i7").className = "fa fa-circle-o";
 				document.getElementById("i8").className = "fa fa-circle-o";
+				document.getElementById("i9").className = "fa fa-circle-o";
+				document.getElementById("i10").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Se desplegar&aacute;n los precios del producto en los establecimientos cercanos a usted, seg&uacute;n la distancia m&aacute;xima configurada en <i class='fa fa-cog'></i>.</h3>";
+				lcstrHtml += "<h3>En los resultados encontrados podr&aacute; visualizar la informaci&oacute;n del producto, as&iacute; como el precio m&aacute;s bajo encontrado, su fecha y localizaci&oacute;n. Los resultados encontrados se mostrar&aacute;n en bloques de 20 registros.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 			case 5:
@@ -1859,9 +1867,11 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i6").className = "fa fa-circle-o";
 				document.getElementById("i7").className = "fa fa-circle-o";
 				document.getElementById("i8").className = "fa fa-circle-o";
+				document.getElementById("i9").className = "fa fa-circle-o";
+				document.getElementById("i10").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Puede contribuir con la comunidad haciendo click en <i class='fa fa-check'></i> si el precio es correcto o en <i class='fa fa-times'></i> si no lo es, para el producto del establecimiento en el que se encuentra.</i></h3>";
+				lcstrHtml += "<h3>Haga click en <i class='fa fa-usd'></i> para consultar los precios ingresados por la comunidad en los establecimientos, en <i class='fa fa-cart-plus'></i> para adicionar el producto a una lista de mercado y en <i class='fa fa-map-marker'></i> para visualizar la ubicaci&oacute;n f&iacute;sica del establecimiento en el mapa.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 			case 6:
@@ -1873,9 +1883,11 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i6").className = "fa fa-circle";
 				document.getElementById("i7").className = "fa fa-circle-o";
 				document.getElementById("i8").className = "fa fa-circle-o";
+				document.getElementById("i9").className = "fa fa-circle-o";
+				document.getElementById("i10").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Si no existe ning&uacute;n precio registrado para el producto en el establecimiento o si &eacute;ste no coindice, puede ayudarnos registr&aacute;ndolo y as&iacute; ayudando a que otros usuarios encuentren el mejor precio.</h3>";
+				lcstrHtml += "<h3>Puede contribuir con la comunidad haciendo click en <i class='fa fa-check'></i> si el precio es correcto o en <i class='fa fa-times'></i> si no lo es, para el producto del establecimiento en el que se encuentra.</i></h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 			case 7:
@@ -1887,9 +1899,11 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i6").className = "fa fa-circle-o";
 				document.getElementById("i7").className = "fa fa-circle";
 				document.getElementById("i8").className = "fa fa-circle-o";
+				document.getElementById("i9").className = "fa fa-circle-o";
+				document.getElementById("i10").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Si el establecimiento en el que se encuentra no aparece en la lista desplegable UBICACI&Oacute;N, puede registrarlo en el campo NUEVA UBICACI&Oacute;N.</h3>";
+				lcstrHtml += "<h3>Si no existe ning&uacute;n precio registrado para el producto en el establecimiento o si &eacute;ste no coindice, puede ayudarnos registr&aacute;ndolo y as&iacute; ayudando a que otros usuarios encuentren el mejor precio.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 			case 8:
@@ -1901,9 +1915,43 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i6").className = "fa fa-circle-o";
 				document.getElementById("i7").className = "fa fa-circle-o";
 				document.getElementById("i8").className = "fa fa-circle";
+				document.getElementById("i9").className = "fa fa-circle-o";
+				document.getElementById("i10").className = "fa fa-circle-o";
+				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
+				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
+				lcstrHtml += "<h3>Si el establecimiento en el que se encuentra no aparece en la lista desplegable UBICACI&Oacute;N, puede registrarlo en el campo NUEVA UBICACI&Oacute;N.</h3>";
+				document.getElementById("tdTutText").innerHTML = lcstrHtml;
+				break;
+			case 9:
+				document.getElementById("i1").className = "fa fa-circle-o";
+				document.getElementById("i2").className = "fa fa-circle-o";
+				document.getElementById("i3").className = "fa fa-circle-o";
+				document.getElementById("i4").className = "fa fa-circle-o";
+				document.getElementById("i5").className = "fa fa-circle-o";
+				document.getElementById("i6").className = "fa fa-circle-o";
+				document.getElementById("i7").className = "fa fa-circle-o";
+				document.getElementById("i8").className = "fa fa-circle-o";
+				document.getElementById("i9").className = "fa fa-circle";
+				document.getElementById("i10").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
 				lcstrHtml += "<h3>Haga click sobre la imagen del producto para tomar una nueva foto o en <i class='fa fa-map-marker'></i> para conocer la ubicaci&oacute;n del establecimiento con el precio deseado.</h3>";
+				document.getElementById("tdTutText").innerHTML = lcstrHtml;
+				break;
+			case 10:
+				document.getElementById("i1").className = "fa fa-circle-o";
+				document.getElementById("i2").className = "fa fa-circle-o";
+				document.getElementById("i3").className = "fa fa-circle-o";
+				document.getElementById("i4").className = "fa fa-circle-o";
+				document.getElementById("i5").className = "fa fa-circle-o";
+				document.getElementById("i6").className = "fa fa-circle-o";
+				document.getElementById("i7").className = "fa fa-circle-o";
+				document.getElementById("i8").className = "fa fa-circle-o";
+				document.getElementById("i9").className = "fa fa-circle-o";
+				document.getElementById("i10").className = "fa fa-circle";
+				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
+				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
+				lcstrHtml += "<h3>Utilice la barra inferior para consultar los precios de sus listas de mercado o para regresar en cualquier momento a las opciones o a este tutorial.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 		}
@@ -2082,7 +2130,9 @@ function TutorialPage() {
 		lcstrHtml += "<i id='i5' class='fa fa-circle-o' onclick='SetTutorialPage(5, 0);'></i>&nbsp;";
 		lcstrHtml += "<i id='i6' class='fa fa-circle-o' onclick='SetTutorialPage(6, 0);'></i>&nbsp;";
 		lcstrHtml += "<i id='i7' class='fa fa-circle-o' onclick='SetTutorialPage(7, 0);'></i>&nbsp;";
-		lcstrHtml += "<i id='i8' class='fa fa-circle-o' onclick='SetTutorialPage(8, 0);'></i>";
+		lcstrHtml += "<i id='i8' class='fa fa-circle-o' onclick='SetTutorialPage(8, 0);'></i>&nbsp;";
+		lcstrHtml += "<i id='i9' class='fa fa-circle-o' onclick='SetTutorialPage(9, 0);'></i>&nbsp;";
+		lcstrHtml += "<i id='i10' class='fa fa-circle-o' onclick='SetTutorialPage(10, 0);'></i>";
 		lcstrHtml += "</td>";
 		lcstrHtml += "</tr>";
 		lcstrHtml += "</table>";
