@@ -328,10 +328,10 @@ function ContributePrice(vlproID) {
 		if (lcstrError == "") {
 			pvobjRequest = getXmlHttpRequestObject();
 			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=CONTRIBUTE2&ID=" + vlproID + "&Ubicacion=" + document.getElementById("txtUbicacion").value + "&NuevaUbicacion=" + window.btoa("" + document.getElementById("txtNuevaUbicacion").value) + "&Precio=" + document.getElementById("txtPrecio").value + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=CONTRIBUTE2&PROID=" + vlproID + "&Ubicacion=" + document.getElementById("txtUbicacion").value + "&NuevaUbicacion=" + window.btoa("" + document.getElementById("txtNuevaUbicacion").value) + "&Precio=" + document.getElementById("txtPrecio").value + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 				console.log(">> " + lcstrRequest);
 				pvobjRequest.open("GET", lcstrRequest, true);
-				pvobjRequest.onreadystatechange = ContributePriceData;
+				pvobjRequest.onreadystatechange = GetPricesData;
 				pvobjRequest.send(null);
 				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
 			}
@@ -341,40 +341,6 @@ function ContributePrice(vlproID) {
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (ContributePrice)");
-	}
-}
-
-function ContributePriceData() {
-	var lcstrHtml = "";
-	
-	try {
-		if (pvobjRequest.readyState == 4) {
-			if (pvobjRequest.status == 200) {
-				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
-				lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-				lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-				lcstrHtml += "<h3>Contribuir</h3>";
-				lcstrHtml += "</div>";
-				lcstrHtml += "<div class='ui-body ui-body-a'>";
-				if (lcobjResponse.errcode == 0)
-					lcstrHtml += "<p>Gracias por su ayuda. Se ha agregado el nuevo precio para el producto seleccionado.</p>";
-				else
-					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-				lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
-				lcstrHtml += "<li class='ui-field-contain'>";
-				lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
-				lcstrHtml += "</li>";
-				lcstrHtml += "</ul>";
-				lcstrHtml += "</div>";
-				lcstrHtml += "</div>";
-				document.getElementById("divContent").innerHTML = lcstrHtml;
-				$('#ulHome').listview().listview('refresh');
-				$('[type="button"]').button().button('refresh');
-			}
-		}
-	}
-	catch (ee) {
-		MsgBox("Error: " + ee.message + " (ContributePriceData)");
 	}
 }
 			
@@ -917,7 +883,8 @@ function GetPictureOptions() {
         sourceType: Camera.PictureSourceType.CAMERA,
         encodingType: Camera.EncodingType.JPEG,
         mediaType: Camera.MediaType.PICTURE,
-        allowEdit: false,
+        allowEdit: true,
+		cameraDirection: Camera.Direction.BACK,
         correctOrientation: true  //Corrects Android orientation quirks
     }
     return lcobjOptions;
