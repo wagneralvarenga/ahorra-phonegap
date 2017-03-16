@@ -760,21 +760,25 @@ function GetListsData(vlstrResponse) {
 				pvintNivel = 1;
 				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
 				if (lcobjResponse.errcode == 0) {
-					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-					lcstrHtml += "<h3>Listas de Mercado</h3>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "<div class='ui-body ui-body-a'>";
-					lcstrHtml += "<ul id='ulListas' data-role='listview' data-inset='true'>";
-					for (lcintI = 0; lcintI < lcobjResponse.data.length; lcintI++)
-						lcstrHtml += "<li><a href='#' onclick='GetListInfo(" + lcobjResponse.data[lcintI].lisid + ");'>" + lcobjResponse.data[lcintI].lisnombre + " <span class='ui-li-count ui-body-b'>" + lcobjResponse.data[lcintI].count + "</span></a></li>";
-					lcstrHtml += "</ul>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "</div>";
-					pvstrBack[pvintNivel] = lcstrHtml;
-					document.getElementById("divContent").innerHTML = lcstrHtml;
-					$('#ulListas').listview().listview('refresh');
-					$('[type="button"]').button().button('refresh');
+					if (lcobjResponse.data.length > 0) {
+						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+						lcstrHtml += "<h3>Listas de Mercado</h3>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "<div class='ui-body ui-body-a'>";
+						lcstrHtml += "<ul id='ulListas' data-role='listview' data-inset='true'>";
+						for (lcintI = 0; lcintI < lcobjResponse.data.length; lcintI++)
+							lcstrHtml += "<li><a href='#' onclick='GetListInfo(" + lcobjResponse.data[lcintI].lisid + ");'>" + lcobjResponse.data[lcintI].lisnombre + " <span class='ui-li-count ui-body-b'>" + lcobjResponse.data[lcintI].count + "</span></a></li>";
+						lcstrHtml += "</ul>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "</div>";
+						pvstrBack[pvintNivel] = lcstrHtml;
+						document.getElementById("divContent").innerHTML = lcstrHtml;
+						$('#ulListas').listview().listview('refresh');
+						$('[type="button"]').button().button('refresh');
+					}
+					else
+						ShowMessage("Listas de Mercado", "Usted no tiene ninguna lista de mercado creada a&uacute;n. Para crear una, busque los productos deseados y haga click en <i class='fa fa-cart-plus'></i> para adicionarlo a una lista o crear una nueva.");
 				}
 				else
 					ShowMessage("Listas de Mercado", lcobjResponse.error);
