@@ -33,6 +33,7 @@ var pvstrAccount = "";
 var pvstrDeviceID = "";
 var pvstrFunction = "";
 var pvstrSearchData = "";
+var pvstrPostMessage = "";
 var pvstrBack = ["", "", "", "", ""];
 var pvpreID = "";
 var pvproNombre = "";
@@ -334,6 +335,7 @@ function ContributePrice(vlproID) {
 				pvobjRequest.onreadystatechange = GetPricesData;
 				pvobjRequest.send(null);
 				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+				pvstrPostMessage = "¡Gracias! El precio ha sido ingresado satisfactoriamente.";
 			}
 		}
 		else
@@ -374,36 +376,18 @@ function ContributeProduct() {
 }
 
 function ContributeProductData() {
-	var lcstrHtml = "";
-	
 	try {
 		if (pvobjRequest.readyState == 4) {
 			if (pvobjRequest.status == 200) {
 				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
-				lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-				lcstrHtml += "<div class='ui-bar ui-bar-a'>";
 				if (lcobjResponse.errcode == 0) {
-					lcstrHtml += "<h3>¡ Gracias !</h3>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "<div class='ui-body ui-body-a'>";
-					lcstrHtml += "<p>La información que ingresaste ha sido enviada a nuestro equipo; la revisaremos y pronto la incluiremos para que esté disponible.</p>";
+					if (lcobjResponse.ean != "")
+						GetScannedProduct(lcobjResponse.ean);
+					else
+						ShowMessage("¡ Gracias !", "La informaci&oacute;n que ingresaste ha sido enviada a nuestro equipo; la revisaremos y pronto la incluiremos para que est&eacute; disponible.");
 				}
-				else {
-					lcstrHtml += "<h3>Contribuir</h3>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "<div class='ui-body ui-body-a'>";
-					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-				}
-				lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
-				lcstrHtml += "<li class='ui-field-contain'>";
-				lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
-				lcstrHtml += "</li>";
-				lcstrHtml += "</ul>";
-				lcstrHtml += "</div>";
-				lcstrHtml += "</div>";
-				document.getElementById("divContent").innerHTML = lcstrHtml;
-				$('#ulHome').listview().listview('refresh');
-				$('[type="button"]').button().button('refresh');
+				else
+					ShowMessage("Contribuir", lcobjResponse.error);
 			}
 		}
 	}
@@ -645,8 +629,8 @@ function GetListInfoData(vlstrResponse) {
 			if (pvobjRequest.status == 200) {
 				pvintNivel = 1;
 				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
-				lcstrHtml += "<div class='ui-corner-all custom-corners'>";
 				if (lcobjResponse.errcode == 0) {
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
 					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
 					lcstrHtml += "<h3>" + lcobjResponse.lisnombre + "</h3>";
 					lcstrHtml += "</div>";
@@ -733,25 +717,15 @@ function GetListInfoData(vlstrResponse) {
 						lcstrHtml += "</div>";
 					}
 					lcstrHtml += "</div>";
-				}
-				else {
-					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-					lcstrHtml += "<h3>Listas de Mercado</h3>";
 					lcstrHtml += "</div>";
-					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-					lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
-					lcstrHtml += "</li>";
-					lcstrHtml += "</ul>";
-					lcstrHtml += "</div>";
+					pvstrBack[pvintNivel] = lcstrHtml;
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+					$('#ulLista').listview().listview('refresh');
+					$('#txtSucursales').selectmenu().selectmenu("refresh"); 
+					$('[type="button"]').button().button('refresh');
 				}
-				lcstrHtml += "</div>";
-				pvstrBack[pvintNivel] = lcstrHtml;
-				document.getElementById("divContent").innerHTML = lcstrHtml;
-				$('#ulLista').listview().listview('refresh');
-				$('#txtSucursales').selectmenu().selectmenu("refresh"); 
-				$('[type="button"]').button().button('refresh');
+				else
+					ShowMessage("Listas de Mercado", lcobjResponse.error);
 			}
 		}
 	}
@@ -785,31 +759,25 @@ function GetListsData(vlstrResponse) {
 			if (pvobjRequest.status == 200) {
 				pvintNivel = 1;
 				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
-				lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-				lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-				lcstrHtml += "<h3>Listas de Mercado</h3>";
-				lcstrHtml += "</div>";
-				lcstrHtml += "<div class='ui-body ui-body-a'>";
 				if (lcobjResponse.errcode == 0) {
+					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+					lcstrHtml += "<h3>Listas de Mercado</h3>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "<div class='ui-body ui-body-a'>";
 					lcstrHtml += "<ul id='ulListas' data-role='listview' data-inset='true'>";
 					for (lcintI = 0; lcintI < lcobjResponse.data.length; lcintI++)
 						lcstrHtml += "<li><a href='#' onclick='GetListInfo(" + lcobjResponse.data[lcintI].lisid + ");'>" + lcobjResponse.data[lcintI].lisnombre + " <span class='ui-li-count ui-body-b'>" + lcobjResponse.data[lcintI].count + "</span></a></li>";
 					lcstrHtml += "</ul>";
+					lcstrHtml += "</div>";
+					lcstrHtml += "</div>";
+					pvstrBack[pvintNivel] = lcstrHtml;
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+					$('#ulListas').listview().listview('refresh');
+					$('[type="button"]').button().button('refresh');
 				}
-				else {
-					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-					lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
-					lcstrHtml += "</li>";
-					lcstrHtml += "</ul>";
-				}
-				lcstrHtml += "</div>";
-				lcstrHtml += "</div>";
-				pvstrBack[pvintNivel] = lcstrHtml;
-				document.getElementById("divContent").innerHTML = lcstrHtml;
-				$('#ulListas').listview().listview('refresh');
-				$('[type="button"]').button().button('refresh');
+				else
+					ShowMessage("Listas de Mercado", lcobjResponse.error);
 			}
 		}
 	}
@@ -1074,6 +1042,8 @@ function GetPricesData() {
 					lcstrHtml += GetContributeText(lcobjResponse);
 					pvstrBack[pvintNivel] = lcstrHtml;
 					document.getElementById("divContent").innerHTML = lcstrHtml;
+					if (pvstrPostMessage != "")
+						MsgBox(pvstrPostMessage);
 				}
 				else {
 					if (pvproFoto != "" && pvproNombre != "") {							
@@ -1128,6 +1098,8 @@ function GetPricesData() {
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (GetPricesData)");
 	}
+	
+	pvstrPostMessage = "";
 }
 
 function GetPricexLocation(vlintPreID) {
@@ -1182,6 +1154,23 @@ function GetPricexLocationData() {
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (GetPricexLocationData)");
+	}
+}
+
+function GetScannedProduct(vlstrEAN) {
+	try {
+		pvobjRequest = getXmlHttpRequestObject();
+		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETCODIGO&PRO=" + vlstrEAN + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+			console.log(">> " + lcstrRequest);
+			pvobjRequest.open("GET", lcstrRequest, true);
+			pvobjRequest.onreadystatechange = GetBarCodeData;
+			pvobjRequest.send(null);
+			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (GetScannedProduct)");
 	}
 }
 
@@ -1307,24 +1296,8 @@ function GetUserData() {
 					$('[type="button"]').button().button('refresh');
 					$('[type="number"]').slider().slider('refresh');
 				}
-				else {
-					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-					lcstrHtml += "<h3>Registro</h3>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "<div class='ui-body ui-body-a'>";
-					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-					lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
-					lcstrHtml += "</li>";
-					lcstrHtml += "</ul>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "</div>";
-					document.getElementById("divContent").innerHTML = lcstrHtml;
-					$('#ulHome').listview().listview('refresh');
-					$('[type="button"]').button().button('refresh');
-				}
+				else
+					ShowMessage("Registro", lcobjResponse.error);
 			}
 		}
 	}
@@ -1511,44 +1484,14 @@ function RegisterData() {
 				if (lcobjResponse.errcode == 0) {
 					SetStorage("AH_EMAIL", "" + lcobjResponse.email);
 					pvstrAccount = GetStorage("AH_EMAIL", "");
-					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-					lcstrHtml += "<h3>Registro</h3>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "<div class='ui-body ui-body-a'>";
-					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-					lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
-					lcstrHtml += "</li>";
-					lcstrHtml += "</ul>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "</div>";
-					document.getElementById("divContent").innerHTML = lcstrHtml;
-					$('#ulHome').listview().listview('refresh');
-					$('[type="button"]').button().button('refresh');
+					ShowMessage("Registro", lcobjResponse.error);
 				}
 				else {
 					if (lcobjResponse.errcode == 99) {
 						SetStorage("AH_EMAIL", "" + lcobjResponse.email);
 						pvstrAccount = GetStorage("AH_EMAIL", "");
 					}
-					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-					lcstrHtml += "<h3>Registro</h3>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "<div class='ui-body ui-body-a'>";
-					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-					lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
-					lcstrHtml += "</li>";
-					lcstrHtml += "</ul>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "</div>";
-					document.getElementById("divContent").innerHTML = lcstrHtml;
-					$('#ulHome').listview().listview('refresh');
-					$('[type="button"]').button().button('refresh');
+					ShowMessage("Registro", lcobjResponse.error);
 				}
 			}
 		}
@@ -1704,24 +1647,8 @@ function SearchData() {
 					pvstrBack[pvintNivel] = lcstrHtml;
 					document.getElementById("divContent").innerHTML = lcstrHtml;
 				}
-				else {
-					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-					lcstrHtml += "<h3>Busqueda de precios</h3>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "<div class='ui-body ui-body-a'>";
-					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-					lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
-					lcstrHtml += "</li>";
-					lcstrHtml += "</ul>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "</div>";
-					document.getElementById("divContent").innerHTML = lcstrHtml;
-					$('#ulHome').listview().listview('refresh');
-					$('[type="button"]').button().button('refresh');
-				}
+				else
+					ShowMessage("Busqueda de precios", lcobjResponse.error);
 			}
 		}
 	}
@@ -1925,6 +1852,32 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (SetTutorialPage)");
+	}
+}
+
+function ShowMessage(vlstrTitle, vlstrError) {
+	var lcstrHtml = "";
+	
+	try {
+		lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+		lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+		lcstrHtml += "<h3>" + vlstrTitle + "</h3>";
+		lcstrHtml += "</div>";
+		lcstrHtml += "<div class='ui-body ui-body-a'>";
+		lcstrHtml += "<p>" + vlstrError + "</p>";
+		lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
+		lcstrHtml += "<li class='ui-field-contain'>";
+		lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
+		lcstrHtml += "</li>";
+		lcstrHtml += "</ul>";
+		lcstrHtml += "</div>";
+		lcstrHtml += "</div>";
+		document.getElementById("divContent").innerHTML = lcstrHtml;
+		$('#ulHome').listview().listview('refresh');
+		$('[type="button"]').button().button('refresh');
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (ShowMessage)");
 	}
 }
 
@@ -2185,24 +2138,8 @@ function UpdateUserData() {
 					$('[type="button"]').button().button('refresh');
 					$('[type="number"]').slider().slider('refresh');
 				}
-				else {
-					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
-					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-					lcstrHtml += "<h3>Preferencias del usuario</h3>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "<div class='ui-body ui-body-a'>";
-					lcstrHtml += "<p>" + lcobjResponse.error + "</p>";
-					lcstrHtml += "<ul id='ulHome' data-role='listview' data-inset='true'>";
-					lcstrHtml += "<li class='ui-field-contain'>";
-					lcstrHtml += "<button class='ui-btn ui-corner-all ui-btn-a ui-btn-raised' onclick='Home();'>Volver al inicio</button>";
-					lcstrHtml += "</li>";
-					lcstrHtml += "</ul>";
-					lcstrHtml += "</div>";
-					lcstrHtml += "</div>";
-					document.getElementById("divContent").innerHTML = lcstrHtml;
-					$('#ulHome').listview().listview('refresh');
-					$('[type="button"]').button().button('refresh');
-				}
+				else
+					ShowMessage("Preferencias del usuario", lcobjResponse.error);
 			}
 		}
 	}
@@ -2228,6 +2165,14 @@ function UploadPicture(vlobjImageUri) {
 					encodeURI("http://www.brainatoms.com/ahorra/tran.php?CMD=FILEUPLOAD&PROID=" + pvproID + "&PROEAN=" + pvproEAN + "&uploaded_file=" + pvproEAN + ".png&filename=" + pvproEAN + ".png&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random()), 
 					function(r) {
 						var lcobjResponse = JSON.parse(r.response);
+						if (lcobjResponse.errcode == 0) {
+							if (document.getElementById("imgFoto"))
+								document.getElementById("imgFoto").src = lcobjResponse.url;
+							if (document.getElementById("lblFotoCredito"))
+								document.getElementById("lblFotoCredito").innerHTML = "";
+							if (document.getElementById("lblAliasUsuario"))
+								document.getElementById("lblAliasUsuario").innerHTML = "";
+						}
 						MsgBox(lcobjResponse.error);
 					}, 
 					function(error) {
