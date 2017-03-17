@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.brainatoms.ahorra" version="1.0.2" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.brainatoms.ahorra" version="1.0.3" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Ahorra</name>
     <description>
         Ahorra es una aplicación que te permite encontrar y comparar los precios de muchos productos en diferentes establecimientos y así tomar una decisión de compra inteligente.
@@ -16,17 +16,17 @@
     <plugin name="cordova-plugin-admobpro" spec="~2.26.0" />
     <plugin name="cordova-plugin-battery-status" source="npm" spec="~1.1.1" />
     <plugin name="cordova-plugin-camera" source="npm" spec="~2.1.1">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="La cámara será utilizada para tomar imágenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
-        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="La librería de imágenes será utilizada para incluir imágenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="La camara sera utilizada para tomar imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
+        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="La libreria de imagenes sera utilizada para incluir imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
     </plugin>
     <plugin name="cordova-plugin-media-capture" source="npm" spec="~1.2.0">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="La cámara será utilizada para tomar imágenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
-        <variable name="MICROPHONE_USAGE_DESCRIPTION" value="El micrófono no es utilizado en esta versión." />
-        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="La librería de imágenes será utilizada para incluir imágenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="La camara sera utilizada para tomar imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
+        <variable name="MICROPHONE_USAGE_DESCRIPTION" value="El microfono no es utilizado en esta version." />
+        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="La libreria de imagenes sera utilizada para incluir imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
     </plugin>
     <plugin name="cordova-plugin-console" source="npm" spec="~1.0.2" />
     <plugin name="cordova-plugin-contacts" source="npm" spec="~2.0.1">
-        <variable name="CONTACTS_USAGE_DESCRIPTION" value="Los contactos no son utilizados en la versión actual." />
+        <variable name="CONTACTS_USAGE_DESCRIPTION" value="Los contactos no son utilizados en la version actual." />
     </plugin>
     <plugin name="cordova-plugin-device" source="npm" spec="~1.1.1" />
     <plugin name="cordova-plugin-device-motion" source="npm" spec="~1.2.0" />
@@ -35,7 +35,7 @@
     <plugin name="cordova-plugin-file" source="npm" spec="~4.1.1" />
     <plugin name="cordova-plugin-file-transfer" source="npm" spec="~1.5.0" />
     <plugin name="cordova-plugin-geolocation" spec="~2.1.0">
-        <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="La geolocalización será utilizada para conocer la ubicación del usuario y así mostrarle las sucursales cercanas a su posición." />
+        <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="La geolocalizacion sera utilizada para conocer la ubicacion del usuario y asi mostrarle las sucursales cercanas a su posicion." />
     </plugin>
     <plugin name="cordova-plugin-globalization" source="npm" spec="~1.0.3" />
     <plugin name="cordova-plugin-inappbrowser" source="npm" spec="~1.3.0" />
@@ -46,9 +46,15 @@
     <plugin name="cordova-plugin-vibration" source="npm" spec="~2.1.0" />
     <plugin name="cordova-plugin-whitelist" source="npm" spec="~1.2.1" />
     <plugin name="com.phonegap.plugins.barcodescanner">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="La cámara será utilizada para escanear los códigos de barras de los productos." />
-		<variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="La librería de imágenes será utilizada para incluir imágenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="La camara sera utilizada para escanear los codigos de barras de los productos." />
+		<variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="La libreria de imagenes sera utilizada para incluir imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
     </plugin>
+	<config-file parent="NSPhotoLibraryUsageDescription" platform="ios" target="*-Info.plist">
+		<string>La libreria de imagenes sera utilizada para incluir imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad.</string>
+	</config-file>
+	<config-file parent="NSCameraUsageDescription" platform="ios" target="*-Info.plist">
+		<string>La camara sera utilizada para tomar imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad o para escanear el codigo de barras de los productos.</string>
+	</config-file>
     <platform name="android">
         <icon density="ldpi" src="www/res/icon/android/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="www/res/icon/android/drawable-mdpi-icon.png" />
