@@ -49,7 +49,7 @@ public class AdMobPlugin extends GenericAdPlugin {
 
   private static final String TEST_BANNER_ID = "ca-app-pub-3940256099942544/6300978111";
   private static final String TEST_INTERSTITIAL_ID = "ca-app-pub-3940256099942544/1033173712";
-  private static final String TEST_REWARDVIDEO_ID = "ca-app-pub-3940256099942544/1042454297";
+  private static final String TEST_REWARDVIDEO_ID = "ca-app-pub-3940256099942544/5224354917";
 
   private AdSize adSize = AdSize.SMART_BANNER;
 
@@ -680,6 +680,7 @@ protected void __showInterstitial(Object interstitial) {
 
     @Override
     public void onRewardedVideoAdClosed() {
+      rewardVideoAd = null; //<-- Added line before the fireAdEvent to reload onAdDismiss
       fireAdEvent(EVENT_AD_DISMISS, ADTYPE_REWARDVIDEO);
 
       // if focus on webview of banner, press back button will quit

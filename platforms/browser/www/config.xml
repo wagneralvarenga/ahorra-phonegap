@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.brainatoms.ahorra" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
-    <feature name="Camera">
-        <param name="browser-package" value="Camera" />
-    </feature>
+<widget id="com.brainatoms.ahorra" version="1.0.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:gap="http://phonegap.com/ns/1.0">
     <feature name="Device">
         <param name="browser-package" value="Device" />
+    </feature>
+    <feature name="Camera">
+        <param name="browser-package" value="Camera" />
     </feature>
     <feature name="BarcodeScanner">
         <param name="browser-package" value="BarcodeScanner" />
@@ -14,9 +14,15 @@
         Ahorra es una aplicación que te permite encontrar y comparar los precios de muchos productos en diferentes establecimientos y así tomar una decisión de compra inteligente.
     </description>
     <author email="wagner.alvarenga@gmail.com" href="http://www.brainatoms.com/ahorra">
-        Wagner Alvarenga Franca | BrainAtoms.com
+        Wagner Alvarenga
     </author>
     <content src="index.html" />
+    <config-file parent="NSPhotoLibraryUsageDescription" platform="ios" target="*-Info.plist">
+        <string>La libreria de imagenes sera utilizada para incluir imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad.</string>
+    </config-file>
+    <config-file parent="NSCameraUsageDescription" platform="ios" target="*-Info.plist">
+        <string>La camara sera utilizada para tomar imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad o para escanear el codigo de barras de los productos.</string>
+    </config-file>
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -27,7 +33,6 @@
     <preference name="DisallowOverscroll" value="true" />
     <preference name="android-minSdkVersion" value="14" />
     <preference name="orientation" value="portrait" />
-    <preference name="SplashScreen" value="splash" />
-    <preference name="AutoHideSplashScreen" value="true" />
-    <preference name="SplashScreenDelay" value="3000" />
+    <preference name="SplashScreenDelay" value="0" />
+    <preference name="windows-identity-name" value="14893WagnerAlvarenga.Ahorra" />
 </widget>

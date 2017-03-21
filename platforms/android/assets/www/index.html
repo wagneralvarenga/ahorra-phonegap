@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <!--
     Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
 
@@ -78,30 +78,26 @@
 			</div>
 		</div><!-- /header -->
 		<div data-role="content" id="divContent">
-			<table style="width: 100%; height: 80%; font-family: 'Roboto', sans-serif;">
-				<tr style="height: 100%">
-					<td id="tdTutPrev" align="center" style="width: 10%"><i class="fa fa-chevron-left fa-2x" style="cursor: pointer;" onclick="SetTutorialPage(0, 2);"></i></td>
-					<td id="tdTutText" align="center" style="width: 80%">
-						<h3>Ahorra es una aplicaci&oacute;n que te permite encontrar y comparar los precios de muchos productos en diferentes establecimientos y as&iacute; tomar una decisi&oacute;n de compra inteligente.</h3>
-					</td>
-					<td id="tdTutNext"  align="center" style="width: 10%"><i class="fa fa-chevron-right fa-2x" style="cursor: pointer;" onclick="SetTutorialPage(0, 1);"></i></td>
-				</tr>
-				<tr style="height: 50px">
-					<td colspan="3" align="center" style="width: 100%">
-						<i id="i1" class="fa fa-circle" onclick="SetTutorialPage(1, 0);"></i>&nbsp;
-						<i id="i2" class="fa fa-circle-o" onclick="SetTutorialPage(2, 0);"></i>&nbsp;
-						<i id="i3" class="fa fa-circle-o" onclick="SetTutorialPage(3, 0);"></i>&nbsp;
-						<i id="i4" class="fa fa-circle-o" onclick="SetTutorialPage(4, 0);"></i>&nbsp;
-						<i id="i5" class="fa fa-circle-o" onclick="SetTutorialPage(5, 0);"></i>&nbsp;
-						<i id="i6" class="fa fa-circle-o" onclick="SetTutorialPage(6, 0);"></i>&nbsp;
-						<i id="i7" class="fa fa-circle-o" onclick="SetTutorialPage(7, 0);"></i>&nbsp;
-						<i id="i8" class="fa fa-circle-o" onclick="SetTutorialPage(8, 0);"></i>
-					</td>
-				</tr>
-			</table>
-			<a href="#" class="ui-btn ui-btn-inline ui-btn-fab ui-btn-fab-bottom ui-btn-raised clr-primary" data-role="toast" data-toast-message="Preferencias del sistema" onclick="GetOptions();">
-				<i class="fa fa-cog"></i>
-			</a>
+			<br /><br /><center><img src="css/themes/default/images/ajax-loader.gif" /></center>
+		</div>
+		<div data-role="footer" data-position="fixed" role="contentinfo" class="ui-footer ui-bar-inherit ui-footer-fixed slideup">
+			<div class="row center-xs">
+				<div class="col-xs-4">
+					<div class="box">
+						<a href="#" class="ui-btn ui-mini nd2-btn-icon-block waves-effect waves-button waves-effect waves-button waves-effect waves-button waves-effect waves-button" onclick="GetLists();"><i class="fa fa-shopping-cart"></i> MIS LISTAS</a>
+					</div>
+				</div>
+				<div class="col-xs-4">
+					<div class="box">
+						<a href="#" class="ui-btn ui-mini nd2-btn-icon-block waves-effect waves-button waves-effect waves-button waves-effect waves-button waves-effect waves-button" onclick="GetUser();"><i class="fa fa-cog"></i> OPCIONES</a>
+					</div>
+				</div>
+				<div class="col-xs-4">
+					<div class="box">
+						<a href="#" class="ui-btn ui-mini nd2-btn-icon-block waves-effect waves-button waves-effect waves-button waves-effect waves-button waves-effect waves-button" onclick="TutorialPage();"><i class="fa fa-info-circle"></i> TUTORIAL</a>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 		

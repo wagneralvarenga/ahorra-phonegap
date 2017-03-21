@@ -7,19 +7,7 @@
         "files": {}
     },
     "installed_plugins": {
-        "cordova-plugin-battery-status": {
-            "PACKAGE_NAME": "com.brainatoms.ahorra"
-        },
-        "cordova-plugin-camera": {
-            "PACKAGE_NAME": "com.brainatoms.ahorra"
-        },
-        "cordova-plugin-media-capture": {
-            "PACKAGE_NAME": "com.brainatoms.ahorra"
-        },
-        "cordova-plugin-console": {
-            "PACKAGE_NAME": "com.brainatoms.ahorra"
-        },
-        "cordova-plugin-contacts": {
+        "cordova-plugin-compat": {
             "PACKAGE_NAME": "com.brainatoms.ahorra"
         },
         "cordova-plugin-device": {
@@ -32,6 +20,27 @@
             "PACKAGE_NAME": "com.brainatoms.ahorra"
         },
         "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "com.brainatoms.ahorra"
+        },
+        "cordova-plugin-admobpro": {
+            "PACKAGE_NAME": "com.brainatoms.ahorra"
+        },
+        "cordova-plugin-battery-status": {
+            "PACKAGE_NAME": "com.brainatoms.ahorra"
+        },
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.brainatoms.ahorra"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "com.brainatoms.ahorra"
+        },
+        "cordova-plugin-contacts": {
+            "PACKAGE_NAME": "com.brainatoms.ahorra"
+        },
+        "cordova-plugin-extension": {
+            "PACKAGE_NAME": "com.brainatoms.ahorra"
+        },
+        "cordova-plugin-file": {
             "PACKAGE_NAME": "com.brainatoms.ahorra"
         },
         "cordova-plugin-file-transfer": {
@@ -47,6 +56,9 @@
             "PACKAGE_NAME": "com.brainatoms.ahorra"
         },
         "cordova-plugin-media": {
+            "PACKAGE_NAME": "com.brainatoms.ahorra"
+        },
+        "cordova-plugin-media-capture": {
             "PACKAGE_NAME": "com.brainatoms.ahorra"
         },
         "cordova-plugin-network-information": {
@@ -66,20 +78,7 @@
         },
         "phonegap-plugin-barcodescanner": {
             "PACKAGE_NAME": "com.brainatoms.ahorra"
-        },
-        "cordova-plugin-admobpro": {
-            "PACKAGE_NAME": "com.brainatoms.ahorra"
         }
     },
-    "dependent_plugins": {
-        "cordova-plugin-compat": {
-            "PACKAGE_NAME": "com.brainatoms.ahorra"
-        },
-        "cordova-plugin-file": {
-            "PACKAGE_NAME": "com.brainatoms.ahorra"
-        },
-        "cordova-plugin-extension": {
-            "PACKAGE_NAME": "com.brainatoms.ahorra"
-        }
-    }
+    "dependent_plugins": {}
 }

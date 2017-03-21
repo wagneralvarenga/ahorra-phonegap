@@ -1521,6 +1521,7 @@ function Scan() {
 							pvobjRequest.onreadystatechange = GetBarCodeData;
 							pvobjRequest.send(null);
 							document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+							document.getElementById("txtBuscar").value = "";
 						}
 					}
 				},
@@ -1737,7 +1738,7 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i10").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Una vez haya confirmado su registro, podr&aacute; escane&eacute; el c&oacute;digo de barras del producto haciendo click en <i class='fa fa-barcode'></i> o introducir la informaci&oacute;n del producto en el campo <b>Producto a buscar ...</b> y visualizar la lista de productos que cumplen con el criterio y cercan&iacute;a.</h3>";
+				lcstrHtml += "<h3>Una vez haya confirmado su registro, podr&aacute; escanear el c&oacute;digo de barras del producto haciendo click en <i class='fa fa-barcode'></i> o introducir la informaci&oacute;n del producto en el campo <b>Producto a buscar ...</b> y visualizar la lista de productos que cumplen con el criterio y cercan&iacute;a.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 			case 4:

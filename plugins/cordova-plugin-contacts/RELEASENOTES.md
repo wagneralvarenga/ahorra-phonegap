@@ -20,25 +20,81 @@
 -->
 # Release Notes
 
+### 2.3.0 (Feb 28, 2017)
+* [CB-12326](https://issues.apache.org/jira/browse/CB-12326) **Android:** `CommonDataKinds.*.LABEL`
+* [CB-8076](https://issues.apache.org/jira/browse/CB-8076) Provide error support for **browser** platform
+* [CB-12445](https://issues.apache.org/jira/browse/CB-12445) (Appium) Removed double check for contact's name
+* [CB-12353](https://issues.apache.org/jira/browse/CB-12353) Corrected merges usage in `plugin.xml`
+* [CB-12369](https://issues.apache.org/jira/browse/CB-12369) Add plugin typings from `DefinitelyTyped`
+* [CB-12363](https://issues.apache.org/jira/browse/CB-12363) Added build badges for **iOS 9.3** and ** iOS 10.0**
+* [CB-12357](https://issues.apache.org/jira/browse/CB-12357) Tests give user some time to accept the permission alert
+* [CB-12300](https://issues.apache.org/jira/browse/CB-12300) fix tests failure when running it using `jasmine-node`
+* [CB-12230](https://issues.apache.org/jira/browse/CB-12230) Removed **Windows 8.1** build badges
+
+### 2.2.1 (Dec 07, 2016)
+* [CB-12224](https://issues.apache.org/jira/browse/CB-12224) Updated version and RELEASENOTES.md for release 2.2.1
+* [CB-11541](https://issues.apache.org/jira/browse/CB-11541) Pended one unsupported test on Windows
+* [CB-11541](https://issues.apache.org/jira/browse/CB-11541) iOS: Add extra labels for phone, ims
+* [CB-11028](https://issues.apache.org/jira/browse/CB-11028) android: Allow to set custom labels for contacts' fields
+* [CB-11975](https://issues.apache.org/jira/browse/CB-11975) iOS: Allow to use numeric values in search filter
+* [CB-11206](https://issues.apache.org/jira/browse/CB-11206) (android) Fixed custom IM protocol parsing close #128
+* [CB-11917](https://issues.apache.org/jira/browse/CB-11917) - Remove pull request template checklist item: "iCLA has been signed and submitted to secretary@apache.org."
+* [CB-11350](https://issues.apache.org/jira/browse/CB-11350) android: retrieve displayName for contact when specified in desiredFields
+* [CB-11864](https://issues.apache.org/jira/browse/CB-11864) Fixed tests for the new Jasmine version
+* [CB-11832](https://issues.apache.org/jira/browse/CB-11832) Incremented plugin version.
+
+### 2.2.0 (Sep 08, 2016)
+* [CB-11795](https://issues.apache.org/jira/browse/CB-11795) Add 'protective' entry to cordovaDependencies
+* Added variable to set the usage
+* Plugin uses `Android Log class` and not `Cordova LOG class`
+* [CB-11695](https://issues.apache.org/jira/browse/CB-11695) Increased session creation timeout for Appium tests
+* [CB-11667](https://issues.apache.org/jira/browse/CB-11667) Memory leak in `CDVContact` for `CoreFoundation` `ABRecordRef`
+* [CB-11574](https://issues.apache.org/jira/browse/CB-11574) Appium tests now use new injected promise chain methods
+* Add badges for paramedic builds on Jenkins
+* [CB-11296](https://issues.apache.org/jira/browse/CB-11296) Appium: Better element clicking and session error handling
+* Add pull request template.
+* Add fenced code blocks - with language hints
+* handle `Invalid Date` error
+* [CB-11166](https://issues.apache.org/jira/browse/CB-11166) Appium tests: Added a check for contact's birthday
+* [CB-11033](https://issues.apache.org/jira/browse/CB-11033) Appium tests: more timeout tweaks
+* [CB-10996](https://issues.apache.org/jira/browse/CB-10996) Adding front matter to `README.md`
+* [CB-11128](https://issues.apache.org/jira/browse/CB-11128) Appium tests: Increased session destruction timeout
+
+### 2.1.0 (Apr 15, 2016)
+* [CB-11043](https://issues.apache.org/jira/browse/CB-11043) **Android** app crashes while trying to save contact with phone numbers array with deleted values
+* [CB-10985](https://issues.apache.org/jira/browse/CB-10985) Android sets type to `-1` for ims Added a corresponding test
+* [CB-11048](https://issues.apache.org/jira/browse/CB-11048) Fix spec27's inadvertant breakage that happened during logging rollback
+* [CB-11041](https://issues.apache.org/jira/browse/CB-11041) `cordova-plugin-contacts` readme must be updated to include instructions on removing phone number from a contact
+* [CB-11033](https://issues.apache.org/jira/browse/CB-11033) Appium tests: Increased the timeout for updating the contact
+* [CB-10399](https://issues.apache.org/jira/browse/CB-10399) Added Appium tests
+* Replace `PermissionHelper.java` with `cordova-plugin-compat`
+* [CB-8115](https://issues.apache.org/jira/browse/CB-8115) incorrect birthday saved to phonebook using Contacts Plugin
+* Changes to stop using global object - remove all created contacts from the emulator
+* [CB-10881](https://issues.apache.org/jira/browse/CB-10881) Increase timeout for Spec22
+* Fix for the specs 26&27 to use the newly created contacts for removal test
+* [CB-10881](https://issues.apache.org/jira/browse/CB-10881) Remove test dependency on global object
+* [CB-10632](https://issues.apache.org/jira/browse/CB-10632) Fixing jasmine test contact removal
+* [CB-10636](https://issues.apache.org/jira/browse/CB-10636) Add `JSHint` for plugins
+
 ### 2.0.1 (Jan 15, 2016)
-* CB-10159 **Android** Adding restore callback to handle Activity destruction
-* CB-10319 **Android** Adding reflective helper methods for permission requests
-* CB-10117 Added new tests
-* CB-10131 Fixed null contact creation.
-* CB-10053 Documents `ContactFieldType` enumeration. 
-* CB-10148 **Android** Added `READ_CONTACTS` permission request when picking a contact
-* CB-10053 Accept assets `URIs` for contact photos
-* CB-8115 Save contact birthday properly
-* CB-6979 Don't create duplicates for extracted contacts photos
-* CB-5308 Makes contacts save specs passing
-* CB-5308 Return `rawId` instead of id when modifying existing contact
-* CB-4921 Corrects examples by adding missing `multiple` option where multiple contacts are expected
-* CB-10094 **Android** Fixed empty string comparison
-* CB-3950 Adds support for custom labels
-* CB-9770 Request user permissions before picking a contact
-* CB-8156 Call error callback on `pickContact` cancellation
-* CB-7906 Prevent app crash when `desiredFields` option has undefined items
-* CB-7021 Adds manual test for `pickContact`
+* [CB-10159](https://issues.apache.org/jira/browse/CB-10159) **Android** Adding restore callback to handle Activity destruction
+* [CB-10319](https://issues.apache.org/jira/browse/CB-10319) **Android** Adding reflective helper methods for permission requests
+* [CB-10117](https://issues.apache.org/jira/browse/CB-10117) Added new tests
+* [CB-10131](https://issues.apache.org/jira/browse/CB-10131) Fixed null contact creation.
+* [CB-10053](https://issues.apache.org/jira/browse/CB-10053) Documents `ContactFieldType` enumeration. 
+* [CB-10148](https://issues.apache.org/jira/browse/CB-10148) **Android** Added `READ_CONTACTS` permission request when picking a contact
+* [CB-10053](https://issues.apache.org/jira/browse/CB-10053) Accept assets `URIs` for contact photos
+* [CB-8115](https://issues.apache.org/jira/browse/CB-8115) Save contact birthday properly
+* [CB-6979](https://issues.apache.org/jira/browse/CB-6979) Don't create duplicates for extracted contacts photos
+* [CB-5308](https://issues.apache.org/jira/browse/CB-5308) Makes contacts save specs passing
+* [CB-5308](https://issues.apache.org/jira/browse/CB-5308) Return `rawId` instead of id when modifying existing contact
+* [CB-4921](https://issues.apache.org/jira/browse/CB-4921) Corrects examples by adding missing `multiple` option where multiple contacts are expected
+* [CB-10094](https://issues.apache.org/jira/browse/CB-10094) **Android** Fixed empty string comparison
+* [CB-3950](https://issues.apache.org/jira/browse/CB-3950) Adds support for custom labels
+* [CB-9770](https://issues.apache.org/jira/browse/CB-9770) Request user permissions before picking a contact
+* [CB-8156](https://issues.apache.org/jira/browse/CB-8156) Call error callback on `pickContact` cancellation
+* [CB-7906](https://issues.apache.org/jira/browse/CB-7906) Prevent app crash when `desiredFields` option has undefined items
+* [CB-7021](https://issues.apache.org/jira/browse/CB-7021) Adds manual test for `pickContact`
 
 ### 2.0.0 (Nov 18, 2015)
 * [CB-10035](https://issues.apache.org/jira/browse/CB-10035) Updated `RELEASENOTES` to be newest to oldest
