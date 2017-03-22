@@ -1338,6 +1338,7 @@ function Home() {
 
 function Initialize() {
 	try {
+		var lcstrVersion = GetStorage("AH_VERSION", "");
 		if (pvstrVersion != lcstrVersion)
 			setTimeout(ShowTerms, 100);
 		else {
