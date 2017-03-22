@@ -1201,9 +1201,9 @@ function GetUser() {
 			lcstrHtml += "<div class='ui-corner-all custom-corners'>";
 			lcstrHtml += "<div class='ui-bar ui-bar-a'>";
 			if (pvstrDeviceID != "")
-				lcstrHtml += "<h3>Preferencias del usuario<br />[" + pvstrDeviceID + "]</h3>";
+				lcstrHtml += "<h3>Preferencias del usuario<br />[" + pvstrDeviceID + "]<br />Versi&oacute;n: " + pvstrVersion + "</h3>";
 			else
-				lcstrHtml += "<h3>Preferencias del usuario<br />[***** DEVICEID ERROR *****]</h3>";
+				lcstrHtml += "<h3>Preferencias del usuario<br />[***** DEVICEID ERROR *****]<br />Versi&oacute;n: " + pvstrVersion + "</h3>";
 			lcstrHtml += "</div>";
 			lcstrHtml += "<div class='ui-body ui-body-a'>";
 			lcstrHtml += "<ul id='ulOpciones' data-role='listview' data-inset='true'>";
@@ -1251,9 +1251,9 @@ function GetUserData() {
 					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
 					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
 					if (pvstrDeviceID != "")
-						lcstrHtml += "<h3>Preferencias del usuario<br />[" + pvstrDeviceID + "]</h3>";
+						lcstrHtml += "<h3>Preferencias del usuario<br />[" + pvstrDeviceID + "]<br />Versi&oacute;n: " + pvstrVersion + "</h3>";
 					else
-						lcstrHtml += "<h3>Preferencias del usuario<br />[***** DEVICEID ERROR *****]</h3>";
+						lcstrHtml += "<h3>Preferencias del usuario<br />[***** DEVICEID ERROR *****]<br />Versi&oacute;n: " + pvstrVersion + "</h3>";
 					lcstrHtml += "</div>";
 					lcstrHtml += "<div class='ui-body ui-body-a'>";
 					lcstrHtml += "<ul id='ulOpciones' data-role='listview' data-inset='true'>";
@@ -2135,9 +2135,9 @@ function UpdateUserData() {
 					lcstrHtml += "<div class='ui-corner-all custom-corners'>";
 					lcstrHtml += "<div class='ui-bar ui-bar-a'>";
 					if (pvstrDeviceID != "")
-						lcstrHtml += "<h3>Preferencias del usuario<br />[" + pvstrDeviceID + "]</h3>";
+						lcstrHtml += "<h3>Preferencias del usuario<br />[" + pvstrDeviceID + "]<br />Versi&oacute;n: " + pvstrVersion + "</h3>";
 					else
-						lcstrHtml += "<h3>Preferencias del usuario<br />[***** DEVICEID ERROR *****]</h3>";
+						lcstrHtml += "<h3>Preferencias del usuario<br />[***** DEVICEID ERROR *****]<br />Versi&oacute;n: " + pvstrVersion + "</h3>";
 					lcstrHtml += "</div>";
 					lcstrHtml += "<div class='ui-body ui-body-a'>";
 					lcstrHtml += "<ul id='ulOpciones' data-role='listview' data-inset='true'>";
