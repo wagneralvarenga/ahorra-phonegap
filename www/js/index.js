@@ -18,6 +18,7 @@
  */
 
 var pvbooStartup = true;
+var pvbooShowTerms = true;
 var pvbooGPSInitialized = false;
 var pvintPage = 0;
 var pvintPromoPage = 0;
@@ -74,6 +75,9 @@ var app = {
 		TutorialPage();
 		pvstrBack[0] = "" + document.getElementById("divContent").innerHTML;
 		document.addEventListener("backbutton", Back, false);
+		var lcstrVersion = GetStorage("AH_VERSION", "");
+		if (pvstrVersion == lcstrVersion)
+			pvbooShowTerms = false;
 		setTimeout(Initialize, 1000);
     }
 };
@@ -721,20 +725,24 @@ function GetListInfoData(vlstrResponse) {
 
 function GetLists() {
 	try {
-		if (pvstrAccount != "" && pvstrDeviceID != "") {
-			pvobjRequest = getXmlHttpRequestObject();
-			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETLISTS&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
-				console.log(">> " + lcstrRequest);
-				pvobjRequest.open("GET", lcstrRequest, true);
-				pvobjRequest.onreadystatechange = GetListsData;
-				pvobjRequest.send(null);
-				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
-			}
-		}
+		if (pvbooShowTerms)
+			setTimeout(ShowTerms, 100);
 		else {
-			MsgBox("Para poder ejecutar esta acci&oacute;n debe registrase primero.");
-			setTimeout(GetUser, 100);
+			if (pvstrAccount != "" && pvstrDeviceID != "") {
+				pvobjRequest = getXmlHttpRequestObject();
+				if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+					lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETLISTS&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+					console.log(">> " + lcstrRequest);
+					pvobjRequest.open("GET", lcstrRequest, true);
+					pvobjRequest.onreadystatechange = GetListsData;
+					pvobjRequest.send(null);
+					document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+				}
+			}
+			else {
+				MsgBox("Para poder ejecutar esta acci&oacute;n debe registrase primero.");
+				setTimeout(GetUser, 100);
+			}
 		}
 	}
 	catch (ee) {
@@ -1344,8 +1352,7 @@ function Home() {
 
 function Initialize() {
 	try {
-		var lcstrVersion = GetStorage("AH_VERSION", "");
-		if (pvstrVersion != lcstrVersion)
+		if (pvbooShowTerms)
 			setTimeout(ShowTerms, 100);
 		else {
 			if (pvstrAccount != "" && pvstrDeviceID != "")
@@ -1536,42 +1543,46 @@ function Scan() {
 	var lcstrRequest = "";
 	
 	try {
-		if (pvstrAccount != "" && pvstrDeviceID != "") {
-			cordova.plugins.barcodeScanner.scan(
-				function (result) {
-					if (result.text != "") {
-						pvobjRequest = getXmlHttpRequestObject();
-						if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-							lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETCODIGO&PRO=" + result.text + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
-							console.log(">> " + lcstrRequest);
-							pvobjRequest.open("GET", lcstrRequest, true);
-							pvobjRequest.onreadystatechange = GetBarCodeData;
-							pvobjRequest.send(null);
-							document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
-							document.getElementById("txtBuscar").value = "";
-						}
-					}
-				},
-				function (error) {
-					MsgBox("Fall&oacute; la lectura del c&oacute;digo de barras. " + error);
-				},
-				{
-					preferFrontCamera : false, // iOS and Android
-					showFlipCameraButton : true, // iOS and Android
-					showTorchButton : true, // iOS and Android
-					torchOn: false, // Android, launch with the torch switched on (if available)
-					prompt : "Posicione el código de barras dentro del area", // Android
-					resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
-					formats : "EAN_13,EAN_8", // default: all but PDF_417 and RSS_EXPANDED
-					orientation : "landscape", // Android only (portrait|landscape), default unset so it rotates with the device
-					disableAnimations : true, // iOS
-					disableSuccessBeep: false // iOS
-				}
-			);
-		}
+		if (pvbooShowTerms)
+			setTimeout(ShowTerms, 100);
 		else {
-			MsgBox("Para poder ejecutar esta acci&oacute;n debe registrase primero.");
-			setTimeout(GetUser, 100);
+			if (pvstrAccount != "" && pvstrDeviceID != "") {
+				cordova.plugins.barcodeScanner.scan(
+					function (result) {
+						if (result.text != "") {
+							pvobjRequest = getXmlHttpRequestObject();
+							if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+								lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETCODIGO&PRO=" + result.text + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+								console.log(">> " + lcstrRequest);
+								pvobjRequest.open("GET", lcstrRequest, true);
+								pvobjRequest.onreadystatechange = GetBarCodeData;
+								pvobjRequest.send(null);
+								document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+								document.getElementById("txtBuscar").value = "";
+							}
+						}
+					},
+					function (error) {
+						MsgBox("Fall&oacute; la lectura del c&oacute;digo de barras. " + error);
+					},
+					{
+						preferFrontCamera : false, // iOS and Android
+						showFlipCameraButton : true, // iOS and Android
+						showTorchButton : true, // iOS and Android
+						torchOn: false, // Android, launch with the torch switched on (if available)
+						prompt : "Posicione el código de barras dentro del area", // Android
+						resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
+						formats : "EAN_13,EAN_8", // default: all but PDF_417 and RSS_EXPANDED
+						orientation : "landscape", // Android only (portrait|landscape), default unset so it rotates with the device
+						disableAnimations : true, // iOS
+						disableSuccessBeep: false // iOS
+					}
+				);
+			}
+			else {
+				MsgBox("Para poder ejecutar esta acci&oacute;n debe registrase primero.");
+				setTimeout(GetUser, 100);
+			}
 		}
 	}
 	catch (ee) {
@@ -1583,27 +1594,31 @@ function Search() {
 	var lcstrRequest = "";
 	
 	try {
-		if (event.key == "Enter" || event.keyCode == 13) {
-			if (pvstrAccount != "" && pvstrDeviceID != "") {
-				if (("" + document.getElementById("txtBuscar").value).length >= 3) {
-					pvintPage = 0;
-					pvstrSearchData = "" + document.getElementById("txtBuscar").value;
-					pvobjRequest = getXmlHttpRequestObject();
-					if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-						lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=0&PRO=" + window.btoa("" + document.getElementById("txtBuscar").value) + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
-						console.log(">> " + lcstrRequest);
-						pvobjRequest.open("GET", lcstrRequest, true);
-						pvobjRequest.onreadystatechange = SearchData;
-						pvobjRequest.send(null);
-						document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+		if (pvbooShowTerms)
+			setTimeout(ShowTerms, 100);
+		else {
+			if (event.key == "Enter" || event.keyCode == 13) {
+				if (pvstrAccount != "" && pvstrDeviceID != "") {
+					if (("" + document.getElementById("txtBuscar").value).length >= 3) {
+						pvintPage = 0;
+						pvstrSearchData = "" + document.getElementById("txtBuscar").value;
+						pvobjRequest = getXmlHttpRequestObject();
+						if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+							lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=0&PRO=" + window.btoa("" + document.getElementById("txtBuscar").value) + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+							console.log(">> " + lcstrRequest);
+							pvobjRequest.open("GET", lcstrRequest, true);
+							pvobjRequest.onreadystatechange = SearchData;
+							pvobjRequest.send(null);
+							document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+						}
 					}
+					else
+						alert("Debe ingresar por lo menos 3 letras del producto.");
 				}
-				else
-					alert("Debe ingresar por lo menos 3 letras del producto.");
-			}
-			else {
-				MsgBox("Para poder ejecutar esta acci&oacute;n debe registrase primero.");
-				setTimeout(GetUser, 100);
+				else {
+					MsgBox("Para poder ejecutar esta acci&oacute;n debe registrase primero.");
+					setTimeout(GetUser, 100);
+				}
 			}
 		}
 	}
@@ -1931,6 +1946,7 @@ function ShowTerms() {
 			lcstrTerms,
 			function (button) {
 				if (button == 1) {
+					pvbooShowTerms = false;
 					SetStorage("AH_VERSION", pvstrVersion);
 					setTimeout(InitializeGPS, 100);
 				}
