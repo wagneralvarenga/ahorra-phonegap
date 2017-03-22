@@ -721,14 +721,20 @@ function GetListInfoData(vlstrResponse) {
 
 function GetLists() {
 	try {
-		pvobjRequest = getXmlHttpRequestObject();
-		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETLISTS&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
-			console.log(">> " + lcstrRequest);
-			pvobjRequest.open("GET", lcstrRequest, true);
-			pvobjRequest.onreadystatechange = GetListsData;
-			pvobjRequest.send(null);
-			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+		if (pvstrAccount != "" && pvstrDeviceID != "") {
+			pvobjRequest = getXmlHttpRequestObject();
+			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETLISTS&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				console.log(">> " + lcstrRequest);
+				pvobjRequest.open("GET", lcstrRequest, true);
+				pvobjRequest.onreadystatechange = GetListsData;
+				pvobjRequest.send(null);
+				document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+			}
+		}
+		else {
+			MsgBox("Para poder ejecutar esta acci&oacute;n debe registrase primero.");
+			setTimeout(GetUser, 100);
 		}
 	}
 	catch (ee) {
