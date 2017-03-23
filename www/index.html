@@ -27,9 +27,9 @@
     <meta name="msapplication-tap-highlight" content="no" />
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
     <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
-	<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; script-src * 'unsafe-inline'; object-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * 'unsafe-inline'; media-src * 'unsafe-inline'; frame-src * 'unsafe-inline'; font-src * 'unsafe-inline'; connect-src * 'unsafe-inline'" />
-	<meta http-equiv="X-Content-Security-Policy" content="default-src * 'unsafe-inline'; script-src * 'unsafe-inline'; object-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * 'unsafe-inline'; media-src * 'unsafe-inline'; frame-src * 'unsafe-inline'; font-src * 'unsafe-inline'; connect-src * 'unsafe-inline'" />
-	<meta http-equiv="X-WebKit-CSP" content="default-src *; script-src * 'unsafe-inline'; object-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * 'unsafe-inline' media-src * 'unsafe-inline'; frame-src * 'unsafe-inline'; font-src * 'unsafe-inline'; connect-src * 'unsafe-inline'" />
+	<meta http-equiv="Content-Security-Policy" content="default-src * gap://ready 'unsafe-inline'; script-src * 'unsafe-inline'; object-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * 'unsafe-inline'; media-src * 'unsafe-inline'; frame-src * 'unsafe-inline'; font-src * 'unsafe-inline'; connect-src * 'unsafe-inline'" />
+	<meta http-equiv="X-Content-Security-Policy" content="default-src * gap://ready 'unsafe-inline'; script-src * 'unsafe-inline'; object-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * 'unsafe-inline'; media-src * 'unsafe-inline'; frame-src * 'unsafe-inline'; font-src * 'unsafe-inline'; connect-src * 'unsafe-inline'" />
+	<meta http-equiv="X-WebKit-CSP" content="default-src * gap://ready 'unsafe-inline'; script-src * 'unsafe-inline'; object-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * 'unsafe-inline' media-src * 'unsafe-inline'; frame-src * 'unsafe-inline'; font-src * 'unsafe-inline'; connect-src * 'unsafe-inline'" />
     <!-- Good default declaration:
     * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
     * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
