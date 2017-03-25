@@ -1,5 +1,5 @@
-<?xml version='1.0' encoding='utf-8'?>
-<widget id="com.brainatoms.ahorra" version="1.0.6" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+﻿<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.brainatoms.ahorra" version="1.0.7" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
     <name>Ahorra</name>
     <description>
         Ahorra es una aplicación que te permite encontrar y comparar los precios de muchos productos en diferentes establecimientos y así tomar una decisión de compra inteligente.
@@ -9,19 +9,21 @@
     </author>
     <content src="index.html" />
     <preference name="DisallowOverscroll" value="true" />
-    <preference name="android-minSdkVersion" value="14" />
     <preference name="orientation" value="portrait" />
-    <preference name="windows-identity-name" value="14893WagnerAlvarenga.Ahorra" />
+	<preference name="android-minSdkVersion" value="14" />
+	<preference name="WindowsStoreIdentityName" value="14893WagnerAlvarenga.Ahorra" />
+	<preference name="WindowsStorePublisherName" value="CN=Wagner Alvarenga, O=BrainAtoms, L=Envigado, S=Antioquia, C=CO" />
+	<preference name="WindowsToastCapable" value="true" />
     <plugin name="cordova-plugin-admobpro" spec="~2.28.3" />
     <plugin name="cordova-plugin-battery-status" spec="~1.2.3" />
     <plugin name="cordova-plugin-camera" spec="~2.4.0">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="La camara sera utilizada para tomar imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
-        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="La libreria de imagenes sera utilizada para incluir imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="La cámara será utilizada para tomar fotos de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
+        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="La libreria de imágenes será utilizada para incluir fotos de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
     </plugin>
     <plugin name="cordova-plugin-compat" spec="~1.1.0" />
     <plugin name="cordova-plugin-console" spec="~1.0.6" />
     <plugin name="cordova-plugin-contacts" spec="~2.3.0">
-        <variable name="CONTACTS_USAGE_DESCRIPTION" value="Los contactos no son utilizados en la version actual." />
+        <variable name="CONTACTS_USAGE_DESCRIPTION" value="Los contactos no son utilizados en la versión actual." />
     </plugin>
     <plugin name="cordova-plugin-device" spec="~1.1.5" />
     <plugin name="cordova-plugin-device-motion" spec="~1.2.4" />
@@ -31,15 +33,15 @@
     <plugin name="cordova-plugin-file" spec="~4.1.1" />
     <plugin name="cordova-plugin-file-transfer" spec="~1.6.2" />
     <plugin name="cordova-plugin-geolocation" spec="~2.4.2">
-        <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="La geolocalizacion sera utilizada para conocer la ubicacion del usuario y asi mostrarle las sucursales cercanas a su posicion." />
+        <variable name="GEOLOCATION_USAGE_DESCRIPTION" value="La geolocalización será utilizada para conocer la ubicación del usuario y así mostrarle las sucursales cercanas a su posición." />
     </plugin>
     <plugin name="cordova-plugin-globalization" spec="~1.0.6" />
     <plugin name="cordova-plugin-inappbrowser" spec="~1.7.0" />
     <plugin name="cordova-plugin-media" spec="~2.4.1" />
     <plugin name="cordova-plugin-media-capture" spec="~1.4.2">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="La camara sera utilizada para tomar imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
-        <variable name="MICROPHONE_USAGE_DESCRIPTION" value="El microfono no es utilizado en esta version." />
-        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="La libreria de imagenes sera utilizada para incluir imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="La cámara será utilizada para tomar fotos de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
+        <variable name="MICROPHONE_USAGE_DESCRIPTION" value="El micrófono no es utilizado en esta versión." />
+        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="La libreria de imágenes será utilizada para incluir fotos de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
     </plugin>
     <plugin name="cordova-plugin-network-information" spec="~1.3.2" />
     <plugin name="cordova-plugin-splashscreen" spec="~4.0.2" />
@@ -47,14 +49,14 @@
     <plugin name="cordova-plugin-vibration" spec="~2.1.4" />
     <plugin name="cordova-plugin-whitelist" spec="~1.3.2" />
     <plugin name="phonegap-plugin-barcodescanner" spec="~6.0.6">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="La camara sera utilizada para escanear los codigos de barras de los productos." />
-        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="La libreria de imagenes sera utilizada para incluir imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="La cámara sera utilizada para escanear los códigos de barras de los productos." />
+        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="La libreria de imágenes será utilizada para incluir fotos de los productos de manera que sirvan de referencia a otros usuarios de la comunidad." />
     </plugin>
 	<config-file parent="NSPhotoLibraryUsageDescription" platform="ios" target="*-Info.plist">
-        <string>La libreria de imagenes sera utilizada para incluir imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad.</string>
+        <string>La libreria de imágenes será utilizada para incluir fotos de los productos de manera que sirvan de referencia a otros usuarios de la comunidad.</string>
     </config-file>
     <config-file parent="NSCameraUsageDescription" platform="ios" target="*-Info.plist">
-        <string>La camara sera utilizada para tomar imagenes de los productos de manera que sirvan de referencia a otros usuarios de la comunidad o para escanear el codigo de barras de los productos.</string>
+        <string>La cámara será utilizada para tomar fotos de los productos de manera que sirvan de referencia a otros usuarios de la comunidad o para escanear el código de barras de los productos.</string>
     </config-file>
     <platform name="android">
         <icon density="ldpi" src="www/res/icon/android/drawable-ldpi-icon.png" />

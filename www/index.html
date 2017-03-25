@@ -28,8 +28,6 @@
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
     <!-- This is a wide open CSP declaration. To lock this down for production, see below. -->
 	<meta http-equiv="Content-Security-Policy" content="default-src * gap://ready 'unsafe-inline'; script-src * 'unsafe-inline'; object-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * 'unsafe-inline'; media-src * 'unsafe-inline'; frame-src * 'unsafe-inline'; font-src * 'unsafe-inline'; connect-src * 'unsafe-inline'" />
-	<meta http-equiv="X-Content-Security-Policy" content="default-src * gap://ready 'unsafe-inline'; script-src * 'unsafe-inline'; object-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * 'unsafe-inline'; media-src * 'unsafe-inline'; frame-src * 'unsafe-inline'; font-src * 'unsafe-inline'; connect-src * 'unsafe-inline'" />
-	<meta http-equiv="X-WebKit-CSP" content="default-src * gap://ready 'unsafe-inline'; script-src * 'unsafe-inline'; object-src * 'unsafe-inline'; style-src * 'unsafe-inline'; img-src * 'unsafe-inline' media-src * 'unsafe-inline'; frame-src * 'unsafe-inline'; font-src * 'unsafe-inline'; connect-src * 'unsafe-inline'" />
     <!-- Good default declaration:
     * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
     * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
@@ -66,41 +64,43 @@
     <title>Ahorra</title>
 </head>
 <body class="ui-mobile-viewport ui-overlay-a nd2-ready" style="margin: 0px;">
-	<div data-role="page">
-		<div data-role="header" data-position="fixed" class="wow fadeIn" style="overflow:hidden;">
-			<a href="#" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay="1.0s" onclick="Back();"><i class="fa fa-arrow-left"></i></a>
-			<h1 class="wow fadeIn" data-wow-delay="0.4s">Ahorra</h1>
-			<a href="#" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay="1.0s" onclick="Scan();"><i class="fa fa-barcode"></i></a>
-			<div class="ui-corner-all custom-corners">
-				<div class="ui-body ui-body-a">
-					<input type="search" name="txtBuscar" id="txtBuscar" value="" placeholder="Producto a buscar..." style="font-size: 14pt" onkeydown="Search();">
+	<div class="app">
+		<div data-role="page">
+			<div data-role="header" data-position="fixed" class="wow fadeIn" style="overflow:hidden;">
+				<a href="#" class="ui-btn ui-btn-left wow fadeIn" data-wow-delay="1.0s" onclick="Back();"><i class="fa fa-arrow-left"></i></a>
+				<h1 class="wow fadeIn" data-wow-delay="0.4s">Ahorra</h1>
+				<a href="#" class="ui-btn ui-btn-right wow fadeIn" data-wow-delay="1.0s" onclick="Scan();"><i class="fa fa-barcode"></i></a>
+				<div class="ui-corner-all custom-corners">
+					<div class="ui-body ui-body-a">
+						<input type="search" name="txtBuscar" id="txtBuscar" value="" placeholder="Producto a buscar..." style="font-size: 14pt" onkeydown="Search();">
+					</div>
+				</div>
+			</div><!-- /header -->
+			<div data-role="content" id="divContent">
+				<br /><br /><center><img src="css/themes/default/images/ajax-loader.gif" /></center>
+			</div>
+			<div data-role="footer" data-position="fixed" role="contentinfo" class="ui-footer ui-bar-inherit ui-footer-fixed slideup">
+				<div class="row center-xs">
+					<div class="col-xs-4">
+						<div class="box">
+							<a href="#" class="ui-btn ui-mini nd2-btn-icon-block waves-effect waves-button waves-effect waves-button waves-effect waves-button waves-effect waves-button" onclick="GetLists();"><i class="fa fa-shopping-cart"></i> MIS LISTAS</a>
+						</div>
+					</div>
+					<div class="col-xs-4">
+						<div class="box">
+							<a href="#" class="ui-btn ui-mini nd2-btn-icon-block waves-effect waves-button waves-effect waves-button waves-effect waves-button waves-effect waves-button" onclick="GetUser();"><i class="fa fa-cog"></i> OPCIONES</a>
+						</div>
+					</div>
+					<div class="col-xs-4">
+						<div class="box">
+							<a href="#" class="ui-btn ui-mini nd2-btn-icon-block waves-effect waves-button waves-effect waves-button waves-effect waves-button waves-effect waves-button" onclick="TutorialPage();"><i class="fa fa-info-circle"></i> TUTORIAL</a>
+						</div>
+					</div>
 				</div>
 			</div>
-		</div><!-- /header -->
-		<div data-role="content" id="divContent">
-			<br /><br /><center><img src="css/themes/default/images/ajax-loader.gif" /></center>
 		</div>
-		<div data-role="footer" data-position="fixed" role="contentinfo" class="ui-footer ui-bar-inherit ui-footer-fixed slideup">
-			<div class="row center-xs">
-				<div class="col-xs-4">
-					<div class="box">
-						<a href="#" class="ui-btn ui-mini nd2-btn-icon-block waves-effect waves-button waves-effect waves-button waves-effect waves-button waves-effect waves-button" onclick="GetLists();"><i class="fa fa-shopping-cart"></i> MIS LISTAS</a>
-					</div>
-				</div>
-				<div class="col-xs-4">
-					<div class="box">
-						<a href="#" class="ui-btn ui-mini nd2-btn-icon-block waves-effect waves-button waves-effect waves-button waves-effect waves-button waves-effect waves-button" onclick="GetUser();"><i class="fa fa-cog"></i> OPCIONES</a>
-					</div>
-				</div>
-				<div class="col-xs-4">
-					<div class="box">
-						<a href="#" class="ui-btn ui-mini nd2-btn-icon-block waves-effect waves-button waves-effect waves-button waves-effect waves-button waves-effect waves-button" onclick="TutorialPage();"><i class="fa fa-info-circle"></i> TUTORIAL</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-		
+    </div>
+
     <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/index.js"></script>
 	<script type="text/javascript" src="js/jquery.min.js"></script>
