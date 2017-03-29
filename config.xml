@@ -11,10 +11,9 @@
     <preference name="DisallowOverscroll" value="true" />
     <preference name="orientation" value="portrait" />
 	<preference name="android-minSdkVersion" value="14" />
-	<preference name="windows-target-version" value="10.0" />
+	<preference name="WindowsStoreDisplayName" value="Wagner Alvarenga" />
 	<preference name="WindowsStoreIdentityName" value="14893WagnerAlvarenga.Ahorra" />
 	<preference name="WindowsStorePublisherName" value="CN=Wagner Alvarenga, O=BrainAtoms, L=Envigado, S=Antioquia, C=CO" />
-	<preference name="WindowsToastCapable" value="true" />
     <plugin name="cordova-plugin-admobpro" spec="~2.28.3" />
     <plugin name="cordova-plugin-battery-status" spec="~1.2.3" />
     <plugin name="cordova-plugin-camera" spec="~2.4.0">
