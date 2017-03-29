@@ -261,9 +261,8 @@ function AddToListData(vlstrResponse) {
 	}
 }
 
-function Back(event) {
+function Back() {
 	try {
-		if (event) event.preventDefault();
 		if (pvintNivel > 0) {
 			pvintNivel--;
 			document.getElementById("divContent").innerHTML = pvstrBack[pvintNivel];
