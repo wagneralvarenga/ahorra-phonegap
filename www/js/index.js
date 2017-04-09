@@ -2062,6 +2062,8 @@ function TakePicture() {
 	try {
 		navigator.camera.getPicture(
 			function cameraSuccess(vlobjImageUri) {
+				if (document.getElementById("imgFoto"))
+					document.getElementById("imgFoto").src = "img/loading.gif";
 				UploadPicture(vlobjImageUri);
 			}, 
 			function cameraError(error) {
