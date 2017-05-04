@@ -35,6 +35,9 @@ var pvstrAccount = "";
 var pvstrDeviceID = "";
 var pvstrFunction = "";
 var pvstrSearchData = "";
+var pvstrCategoryData = "";
+var pvstrSubcategoryData = "";
+var pvstrBrandData = "";
 var pvstrPostMessage = "";
 var pvstrBack = ["", "", "", "", ""];
 var pvpreID = "";
@@ -280,6 +283,8 @@ function Back() {
 				if (document.getElementById("tdTutText"))
 					SetTutorialPage(pvintTutorialPage, 0);
 				else {
+					if (document.getElementById("ulCategories"))
+						$('#ulCategories').listview().listview('refresh');
 					if (document.getElementById("ulBest50"))
 						$('#ulBest50').listview().listview('refresh');
 					$('[type="button"]').button().button('refresh');
@@ -443,8 +448,8 @@ function GetBarCodeData() {
 						lcstrHtml += "<div class='row between-xs'>";
 						lcstrHtml += "<div class='col-xs-12 align-right'>";
 						lcstrHtml += "<div class='box'>";
-						lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\"><i class='fa fa-usd' style='cursor: pointer;'></i></a>";
-						lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button' onclick=\"AddToList(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\"><i class='fa fa-cart-plus' style='cursor: pointer;'></i></a>";
+						lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\"><i class='fa fa-search' style='cursor: pointer;'></i></a>";
+						lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button' onclick=\"AddToList(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\"><i class='fa fa-list' style='cursor: pointer;'></i></a>";
 						if (lcobjResponse.data[lcintI].sucdistancia > 0.0)
 							lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button' onclick='GetPricexLocation(" + lcobjResponse.data[lcintI].preid + ");'><i class='fa fa-map-marker' style='cursor: pointer;'></i></a>";
 						if (lcobjResponse.data[lcintI].sucdistancia >= 0.0)
@@ -777,7 +782,7 @@ function GetListsData(vlstrResponse) {
 						$('[type="button"]').button().button('refresh');
 					}
 					else
-						ShowMessage("Listas de Mercado", "Usted no tiene ninguna lista de mercado creada a&uacute;n. Para crear una, busque los productos deseados y haga click en <i class='fa fa-cart-plus'></i> para adicionarlo a una lista o crear una nueva.");
+						ShowMessage("Listas de Mercado", "Usted no tiene ninguna lista de mercado creada a&uacute;n. Para crear una, busque los productos deseados y haga click en <i class='fa fa-list'></i> para adicionarlo a una lista o crear una nueva.");
 				}
 				else
 					ShowMessage("Listas de Mercado", lcobjResponse.error);
@@ -961,7 +966,7 @@ function GetPrices(vlintProductID, vlstrProductName, vlstrProductPhoto, vlstrPro
 		}
 	}
 	catch (ee) {
-		MsgBox("Error: " + ee.message + " (Search)");
+		MsgBox("Error: " + ee.message + " (GetPrices)");
 	}
 }
 
@@ -1174,6 +1179,82 @@ function GetScannedProduct(vlstrEAN) {
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (GetScannedProduct)");
+	}
+}
+			
+function GetSubcategories(vlcatID) {
+	try {
+		pvstrCategoryData = vlcatID;
+		pvobjRequest = getXmlHttpRequestObject();
+		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETSUBCATEGORIAS&CATID=" + vlcatID + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+			console.log(">> " + lcstrRequest);
+			pvobjRequest.open("GET", lcstrRequest, true);
+			pvobjRequest.onreadystatechange = GetSubcategoriesData;
+			pvobjRequest.send(null);
+			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (GetSubcategories)");
+	}
+}
+
+function GetSubcategoriesData(vlstrResponse) {
+	var lcstrHtml = "";
+	
+	try {
+		if (pvobjRequest.readyState == 4) {
+			if (pvobjRequest.status == 200) {
+				pvintNivel = 1;
+				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
+				if (lcobjResponse.errcode == 0) {
+					if (lcobjResponse.categories.data.length > 0) {
+						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+						lcstrHtml += "<h3>" + lcobjResponse.categories.title + "</h3>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "<div class='ui-body ui-body-a'>";
+						lcstrHtml += "<ul id='ulCategories' data-role='listview' data-inset='true'>";
+						for (lcintI = 0; lcintI < lcobjResponse.categories.data.length; lcintI++) {
+							lcstrHtml += "<li class='ui-li-has-count ui-first-child' style='cursor: pointer;' onclick=\"Search2('" + lcobjResponse.categories.data[lcintI].id + "', '');\">";
+							lcstrHtml += "" + lcobjResponse.categories.data[lcintI].name + "<span class='ui-li-count ui-body-b'>" + lcobjResponse.categories.data[lcintI].count + "</span>";
+							lcstrHtml += "</li>";
+						}
+						lcstrHtml += "</ol>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "</div>";
+					}
+					if (lcobjResponse.brands.length > 0) {
+						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+						lcstrHtml += "<h3>Marcas</h3>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "<div class='ui-body ui-body-a'>";
+						lcstrHtml += "<ul id='ulBrands' data-role='listview' data-inset='true'>";
+						for (lcintI = 0; lcintI < lcobjResponse.brands.length; lcintI++) {
+							lcstrHtml += "<li class='ui-li-has-count ui-first-child' style='cursor: pointer;' onclick=\"Search2('', '" + lcobjResponse.brands[lcintI].id + "');\">";
+							lcstrHtml += "" + lcobjResponse.brands[lcintI].name + "<span class='ui-li-count ui-body-b'>" + lcobjResponse.brands[lcintI].count + "</span>";
+							lcstrHtml += "</li>";
+						}
+						lcstrHtml += "</ol>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "</div>";
+					}
+					pvstrBack[pvintNivel] = lcstrHtml;
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+					if (document.getElementById("ulCategories"))
+						$('#ulCategories').listview().listview('refresh');
+					if (document.getElementById("ulBrands"))
+						$('#ulBrands').listview().listview('refresh');
+				}
+				else
+					ShowMessage("Subcategorias", lcobjResponse.error);
+			}
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (GetSubcategoriesData)");
 	}
 }
 
@@ -1405,7 +1486,7 @@ function NextPage() {
 		pvintPage++;
 		pvobjRequest = getXmlHttpRequestObject();
 		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&CATID=" + pvstrCategoryData + "&SUBID=" + pvstrSubcategoryData + "&MARID=" + pvstrBrandData + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 			console.log(">> " + lcstrRequest);
 			pvobjRequest.open("GET", lcstrRequest, true);
 			pvobjRequest.onreadystatechange = SearchData;
@@ -1444,7 +1525,7 @@ function PreviousPage() {
 			pvintPage--;
 			pvobjRequest = getXmlHttpRequestObject();
 			if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+				lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=" + pvintPage + "&PRO=" + window.btoa(pvstrSearchData) + "&CATID=" + pvstrCategoryData + "&SUBID=" + pvstrSubcategoryData + "&MARID=" + pvstrBrandData + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 				console.log(">> " + lcstrRequest);
 				pvobjRequest.open("GET", lcstrRequest, true);
 				pvobjRequest.onreadystatechange = SearchData;
@@ -1601,10 +1682,13 @@ function Search() {
 				if (pvstrAccount != "" && pvstrDeviceID != "") {
 					if (("" + document.getElementById("txtBuscar").value).length >= 3) {
 						pvintPage = 0;
+						pvstrCategoryData = "";
+						pvstrSubcategoryData = "";
+						pvstrBrandData = "";
 						pvstrSearchData = "" + document.getElementById("txtBuscar").value;
 						pvobjRequest = getXmlHttpRequestObject();
 						if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
-							lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=0&PRO=" + window.btoa("" + document.getElementById("txtBuscar").value) + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+							lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=0&PRO=" + window.btoa(pvstrSearchData) + "&CATID=&SUBID=&MARID=&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
 							console.log(">> " + lcstrRequest);
 							pvobjRequest.open("GET", lcstrRequest, true);
 							pvobjRequest.onreadystatechange = SearchData;
@@ -1624,6 +1708,27 @@ function Search() {
 	}
 	catch (ee) {
 		MsgBox("Error: " + ee.message + " (Search)");
+	}
+}
+			
+function Search2(vlsubID, vlmarID) {
+	try {
+		pvintPage = 0;
+		pvstrSubcategoryData = vlsubID;
+		pvstrBrandData = vlmarID;
+		pvstrSearchData = "";
+		pvobjRequest = getXmlHttpRequestObject();
+		if (pvobjRequest.readyState == 4 || pvobjRequest.readyState == 0) {
+			lcstrRequest = "http://www.brainatoms.com/ahorra/tran.php?CMD=GETPRODUCTOS&PAGE=0&PRO=&CATID=" + pvstrCategoryData + "&SUBID=" + pvstrSubcategoryData + "&MARID=" + pvstrBrandData + "&LAT=" + pvdblLatitud + "&LON=" + pvdblLongitud + "&MAX=" + (pvintDistanciaMax * 1000) + "&ACCOUNT=" + pvstrAccount + "&DEVICEID=" + pvstrDeviceID + "&PID=" + Math.random();
+			console.log(">> " + lcstrRequest);
+			pvobjRequest.open("GET", lcstrRequest, true);
+			pvobjRequest.onreadystatechange = SearchData;
+			pvobjRequest.send(null);
+			document.getElementById("divContent").innerHTML = "<br /><br /><center><img src='css/themes/default/images/ajax-loader.gif' /></center>";
+		}
+	}
+	catch (ee) {
+		MsgBox("Error: " + ee.message + " (Search2)");
 	}
 }
 
@@ -1660,7 +1765,6 @@ function SearchData() {
 						lcstrHtml += "</div>";
 						lcstrHtml += "<div class='card-title has-supporting-text has-action'>";
 						lcstrHtml += "<h5 class='card-subtitle'><b>" + lcobjResponse.data[lcintI].pronombre + "</b></h5>";
-						lcstrHtml += "<h5 class='card-subtitle'>" + lcobjResponse.data[lcintI].proean + "</h5>";
 						if ("" + lcobjResponse.data[lcintI].sucnombre != "") {
 							if ("" + lcobjResponse.data[lcintI].prevalorpromo != "0")
 								lcstrHtml += "<h5 class='card-subtitle'><strike>$" + (lcobjResponse.data[lcintI].prevalor).formatMoney(0, ',', '.') + "</strike>&nbsp;<font color='red'>$" + (lcobjResponse.data[lcintI].prevalorpromo).formatMoney(0, ',', '.') + "</font> (" + lcobjResponse.data[lcintI].usualias + ")</h5>";
@@ -1672,8 +1776,8 @@ function SearchData() {
 						lcstrHtml += "<div class='row between-xs'>";
 						lcstrHtml += "<div class='col-xs-12 align-right'>";
 						lcstrHtml += "<div class='box'>";
-						lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\"><i class='fa fa-usd' style='cursor: pointer;'></i></a>";
-						lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button' onclick=\"AddToList(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\"><i class='fa fa-cart-plus' style='cursor: pointer;'></i></a>";
+						lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button' onclick=\"GetPrices(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\"><i class='fa fa-search' style='cursor: pointer;'></i></a>";
+						lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button waves-effect waves-button' onclick=\"AddToList(" + lcobjResponse.data[lcintI].proid + ", '" + lcobjResponse.data[lcintI].pronombre + "', '" + lcobjResponse.data[lcintI].profoto + "', '" + lcobjResponse.data[lcintI].proean + "', '" + lcobjResponse.data[lcintI].profotoalias + "', " + lcobjResponse.data[lcintI].profotocount + ");\"><i class='fa fa-list' style='cursor: pointer;'></i></a>";
 						if (lcobjResponse.data[lcintI].sucdistancia > 0.0)
 							lcstrHtml += "<a href='#' class='ui-btn ui-btn-inline ui-btn-fab waves-effect waves-button' onclick='GetPricexLocation(" + lcobjResponse.data[lcintI].preid + ");'><i class='fa fa-map-marker' style='cursor: pointer;'></i></a>";
 						if (lcobjResponse.data[lcintI].sucdistancia >= 0.0)
@@ -1812,7 +1916,7 @@ function SetTutorialPage(vlintPage, vlintDirection) {
 				document.getElementById("i10").className = "fa fa-circle-o";
 				document.getElementById("tdTutPrev").innerHTML = "<i class='fa fa-chevron-left fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 2);'></i>";
 				document.getElementById("tdTutNext").innerHTML = "<i class='fa fa-chevron-right fa-2x' style='cursor: pointer;' onclick='SetTutorialPage(0, 1);'></i>";
-				lcstrHtml += "<h3>Haga click en <i class='fa fa-usd'></i> para consultar los precios ingresados por la comunidad en los establecimientos, en <i class='fa fa-cart-plus'></i> para adicionar el producto a una lista de mercado y en <i class='fa fa-map-marker'></i> para visualizar la ubicaci&oacute;n f&iacute;sica del establecimiento en el mapa.</h3>";
+				lcstrHtml += "<h3>Haga click en <i class='fa fa-search'></i> para consultar los precios ingresados por la comunidad en los establecimientos, en <i class='fa fa-list'></i> para adicionar el producto a una lista de mercado y en <i class='fa fa-map-marker'></i> para visualizar la ubicaci&oacute;n f&iacute;sica del establecimiento en el mapa.</h3>";
 				document.getElementById("tdTutText").innerHTML = lcstrHtml;
 				break;
 			case 6:
@@ -1974,16 +2078,26 @@ function StartupData() {
 			if (pvobjRequest.status == 200) {
 				var lcobjResponse = JSON.parse(pvobjRequest.responseText);
 				if (lcobjResponse.errcode == 0) {
-					if (lcobjResponse.best50.data.length > 0) {
+					if (lcobjResponse.info.message != "") {
 						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
 						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
-						lcstrHtml += "<h3>" + lcobjResponse.best50.title + "</h3>";
+						lcstrHtml += "<h3>" + lcobjResponse.info.title + "</h3>";
 						lcstrHtml += "</div>";
 						lcstrHtml += "<div class='ui-body ui-body-a'>";
-						lcstrHtml += "<ol id='ulBest50' data-role='listview' data-inset='true'>";
-						for (lcintI = 0; lcintI < lcobjResponse.best50.data.length; lcintI++) {
-							lcstrHtml += "<li class='ui-li-has-count ui-first-child'>";
-							lcstrHtml += "" + lcobjResponse.best50.data[lcintI].alias + "<span class='ui-li-count ui-body-b'>" + lcobjResponse.best50.data[lcintI].count + "</span>";
+						lcstrHtml += "<h3>" + lcobjResponse.info.message + "</h3>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "</div>";
+					}
+					if (lcobjResponse.categories.data.length > 0) {
+						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+						lcstrHtml += "<h3>" + lcobjResponse.categories.title + "</h3>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "<div class='ui-body ui-body-a'>";
+						lcstrHtml += "<ul id='ulCategories' data-role='listview' data-inset='true'>";
+						for (lcintI = 0; lcintI < lcobjResponse.categories.data.length; lcintI++) {
+							lcstrHtml += "<li class='ui-li-has-count ui-first-child' style='cursor: pointer;' onclick=\"GetSubcategories('" + lcobjResponse.categories.data[lcintI].id + "');\">";
+							lcstrHtml += "" + lcobjResponse.categories.data[lcintI].name + "<span class='ui-li-count ui-body-b'>" + lcobjResponse.categories.data[lcintI].count + "</span>";
 							lcstrHtml += "</li>";
 						}
 						lcstrHtml += "</ol>";
@@ -2040,13 +2154,29 @@ function StartupData() {
 						lcstrHtml += "</div>";
 						lcstrHtml += "</div>";
 					}
-					pvstrBack[0] = lcstrHtml;
-					if (pvintNivel == 0) {
-						document.getElementById("divContent").innerHTML = lcstrHtml;
-						if (document.getElementById("ulBest50"))
-							$('#ulBest50').listview().listview('refresh');
-						$('[type="button"]').button().button('refresh');
+					if (lcobjResponse.best50.data.length > 0) {
+						lcstrHtml += "<div class='ui-corner-all custom-corners'>";
+						lcstrHtml += "<div class='ui-bar ui-bar-a'>";
+						lcstrHtml += "<h3>" + lcobjResponse.best50.title + "</h3>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "<div class='ui-body ui-body-a'>";
+						lcstrHtml += "<ol id='ulBest50' data-role='listview' data-inset='true'>";
+						for (lcintI = 0; lcintI < lcobjResponse.best50.data.length; lcintI++) {
+							lcstrHtml += "<li class='ui-li-has-count ui-first-child'>";
+							lcstrHtml += "" + lcobjResponse.best50.data[lcintI].alias + "<span class='ui-li-count ui-body-b'>" + lcobjResponse.best50.data[lcintI].count + "</span>";
+							lcstrHtml += "</li>";
+						}
+						lcstrHtml += "</ol>";
+						lcstrHtml += "</div>";
+						lcstrHtml += "</div>";
 					}
+					pvstrBack[0] = lcstrHtml;
+					document.getElementById("divContent").innerHTML = lcstrHtml;
+					if (document.getElementById("ulCategories"))
+						$('#ulCategories').listview().listview('refresh');
+					if (document.getElementById("ulBest50"))
+						$('#ulBest50').listview().listview('refresh');
+					$('[type="button"]').button().button('refresh');
 				}
 			}
 		}
